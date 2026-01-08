@@ -1,5 +1,6 @@
 #!/bin/bash
 # Slack thread to Markdown converter
+# Reads JSON from stdin (from slack-api.mjs)
 # Usage: ./slack-to-md.sh <channel_id> <thread_ts> <workspace> <output_file> [title]
 
 set -e
@@ -12,15 +13,16 @@ TITLE="${5:-Slack Thread}"
 
 if [[ -z "$CHANNEL_ID" || -z "$THREAD_TS" || -z "$WORKSPACE" || -z "$OUTPUT_FILE" ]]; then
     echo "Usage: $0 <channel_id> <thread_ts> <workspace> <output_file> [title]" >&2
+    echo "       JSON is read from stdin" >&2
     exit 1
 fi
 
-# Fetch messages from Slack
-echo "Fetching messages from Slack..." >&2
-JSON=$(slackcli conversations read "$CHANNEL_ID" --thread-ts="$THREAD_TS" --json --limit=100 2>/dev/null)
+# Read JSON from stdin
+echo "Reading messages from stdin..." >&2
+JSON=$(cat)
 
 if [[ -z "$JSON" ]]; then
-    echo "Error: Failed to fetch messages" >&2
+    echo "Error: No JSON data received from stdin" >&2
     exit 1
 fi
 
