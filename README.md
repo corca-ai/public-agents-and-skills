@@ -40,7 +40,10 @@
 
 ### attention.sh
 
-Claude Code가 사용자의 주의를 필요로 할 때 Slack 또는 Discord로 푸시 알림을 보내는 훅입니다. 질문이 있거나 작업이 완료되었을 때 알림을 받을 수 있습니다. 원격 서버에 세팅해뒀을 때 유용합니다.
+Claude Code가 사용자의 입력을 60초 이상 기다릴 때 Slack 또는 Discord로 푸시 알림을 보내는 훅입니다. 알림에는 작업 컨텍스트(사용자 요청, Claude 응답, Todo 상태)가 포함되어 어떤 작업인지 즉시 파악할 수 있습니다. 원격 서버에 세팅해뒀을 때 유용합니다.
+
+**필수 조건**:
+- `jq` 설치 필요 (JSON 파싱용)
 
 **설정 방법**:
 
@@ -51,24 +54,13 @@ Claude Code가 사용자의 주의를 필요로 할 때 Slack 또는 Discord로 
 ```json
 {
   "hooks": {
-    "PreToolUse": [
+    "Notification": [
       {
-        "matcher": "AskUserQuestion",
+        "matcher": "idle_prompt",
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/attention.sh question"
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/attention.sh done"
+            "command": "~/.claude/hooks/attention.sh"
           }
         ]
       }
@@ -77,9 +69,29 @@ Claude Code가 사용자의 주의를 필요로 할 때 Slack 또는 Discord로 
 }
 ```
 
-**알림 종류**:
-- `question`: Claude가 질문이 있을 때
-- `done`: Claude가 작업을 완료했을 때
+**알림 내용**:
+- 📝 요청: 마지막 사용자 요청 (처음/끝 3줄씩 truncate)
+- 🤖 응답: Claude의 마지막 응답 (처음/끝 3줄씩 truncate)
+- ✅ Todo: 완료/진행중/대기 항목 수
+
+**예시 알림**:
+```
+Claude Code @ hostname
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📝 요청:
+Run the build and fix any type errors
+...
+and make sure all tests pass
+
+🤖 응답:
+I've fixed all 10 type errors:
+- src/index.ts: fixed missing return type
+...
+All tests are now passing.
+
+✅ Todo: 10/10 완료
+```
 
 ## 설치
 
