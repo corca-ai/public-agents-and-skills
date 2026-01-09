@@ -94,7 +94,7 @@ cat > "$TEMP_DIR/transcript_string.jsonl" << 'EOF'
 {"type":"user","message":{"content":"Second message with text only"}}
 EOF
 
-RESULT=$(jq -rs '[.[] | select(.type == "user")] | last | .message.content | if type == "string" then . elif type == "array" then [.[] | select(type == "string" or .type == "text") | if type == "string" then . else .text end] | join("\n") else "" end // ""' "$TEMP_DIR/transcript_string.jsonl")
+RESULT=$(jq -rs '[.[] | select(.type == "user") | select((.message.content | type == "string") or (.message.content | type == "array" and any(.[]; type == "string" or .type == "text")))] | last | .message.content | if type == "string" then . elif type == "array" then [.[] | select(type == "string" or .type == "text") | if type == "string" then . else .text end] | join("\n") else "" end // ""' "$TEMP_DIR/transcript_string.jsonl")
 assert_eq "Second message with text only" "$RESULT" "LAST_HUMAN_TEXT: string content"
 
 # Test: array content (message with image)
@@ -104,7 +104,7 @@ cat > "$TEMP_DIR/transcript_array.jsonl" << 'EOF'
 {"type":"user","message":{"content":[{"type":"image","source":{"type":"base64"}},{"type":"text","text":"Message with image"}]}}
 EOF
 
-RESULT=$(jq -rs '[.[] | select(.type == "user")] | last | .message.content | if type == "string" then . elif type == "array" then [.[] | select(type == "string" or .type == "text") | if type == "string" then . else .text end] | join("\n") else "" end // ""' "$TEMP_DIR/transcript_array.jsonl")
+RESULT=$(jq -rs '[.[] | select(.type == "user") | select((.message.content | type == "string") or (.message.content | type == "array" and any(.[]; type == "string" or .type == "text")))] | last | .message.content | if type == "string" then . elif type == "array" then [.[] | select(type == "string" or .type == "text") | if type == "string" then . else .text end] | join("\n") else "" end // ""' "$TEMP_DIR/transcript_array.jsonl")
 assert_eq "Message with image" "$RESULT" "LAST_HUMAN_TEXT: array content with image"
 
 # Test: array with multiple text blocks
@@ -112,10 +112,20 @@ cat > "$TEMP_DIR/transcript_multi_text.jsonl" << 'EOF'
 {"type":"user","message":{"content":[{"type":"text","text":"First part"},{"type":"text","text":"Second part"}]}}
 EOF
 
-RESULT=$(jq -rs '[.[] | select(.type == "user")] | last | .message.content | if type == "string" then . elif type == "array" then [.[] | select(type == "string" or .type == "text") | if type == "string" then . else .text end] | join("\n") else "" end // ""' "$TEMP_DIR/transcript_multi_text.jsonl")
+RESULT=$(jq -rs '[.[] | select(.type == "user") | select((.message.content | type == "string") or (.message.content | type == "array" and any(.[]; type == "string" or .type == "text")))] | last | .message.content | if type == "string" then . elif type == "array" then [.[] | select(type == "string" or .type == "text") | if type == "string" then . else .text end] | join("\n") else "" end // ""' "$TEMP_DIR/transcript_multi_text.jsonl")
 EXPECTED="First part
 Second part"
 assert_eq "$EXPECTED" "$RESULT" "LAST_HUMAN_TEXT: array with multiple text blocks"
+
+# Test: skip tool_result-only messages (should get previous text message)
+cat > "$TEMP_DIR/transcript_tool_result.jsonl" << 'EOF'
+{"type":"user","message":{"content":"Real user request"}}
+{"type":"assistant","message":{"content":[{"type":"text","text":"Response"},{"type":"tool_use","name":"Bash","id":"123"}]}}
+{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"123","content":"command output"}]}}
+EOF
+
+RESULT=$(jq -rs '[.[] | select(.type == "user") | select((.message.content | type == "string") or (.message.content | type == "array" and any(.[]; type == "string" or .type == "text")))] | last | .message.content | if type == "string" then . elif type == "array" then [.[] | select(type == "string" or .type == "text") | if type == "string" then . else .text end] | join("\n") else "" end // ""' "$TEMP_DIR/transcript_tool_result.jsonl")
+assert_eq "Real user request" "$RESULT" "LAST_HUMAN_TEXT: skip tool_result-only messages"
 
 
 # === TEST: LAST_ASSISTANT_TEXT extraction ===
