@@ -127,8 +127,8 @@ HOSTNAME=$(hostname)
 TITLE="Claude Code @ $HOSTNAME"
 
 if [ -n "$TRANSCRIPT_PATH" ] && [ -f "$TRANSCRIPT_PATH" ]; then
-    # Get last user message with string content (real human input, not tool results)
-    LAST_HUMAN_TEXT=$(jq -rs '[.[] | select(.type == "user" and (.message.content | type == "string"))] | last | .message.content // ""' "$TRANSCRIPT_PATH" 2>/dev/null)
+    # Get last user message (handles both string content and array content with images)
+    LAST_HUMAN_TEXT=$(jq -rs '[.[] | select(.type == "user")] | last | .message.content | if type == "string" then . elif type == "array" then [.[] | select(type == "string" or .type == "text") | if type == "string" then . else .text end] | join("\n") else "" end // ""' "$TRANSCRIPT_PATH" 2>/dev/null)
 
     # Get all assistant messages' text content (combined, since responses can span multiple messages)
     LAST_ASSISTANT_TEXT=$(jq -rs '[.[] | select(.type == "assistant") | .message.content | if type == "array" then [.[] | select(.type == "text") | .text] else [. // ""] end] | flatten | map(select(. != "")) | join("\n\n")' "$TRANSCRIPT_PATH" 2>/dev/null)
