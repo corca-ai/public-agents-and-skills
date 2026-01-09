@@ -1,7 +1,14 @@
 #!/bin/bash
-# Claude Code notification script (improved version)
+# Claude Code notification script
 # Sends notification only after 60 seconds of inactivity (idle_prompt)
 # Includes task context: user request, Claude response, and todo status
+#
+# === COMPATIBILITY WARNING ===
+# This script parses Claude Code's internal transcript format using jq.
+# The transcript structure is not a public API and may change between versions.
+# If notifications stop working after a Claude Code update, the jq queries may need adjustment.
+#
+# Last tested with: Claude Code v2.1.1 (2025-01-09)
 
 # Usage: Add this file to ~/.claude/hooks, and add the following to your .claude/settings.json
 # {
@@ -123,8 +130,8 @@ if [ -n "$TRANSCRIPT_PATH" ] && [ -f "$TRANSCRIPT_PATH" ]; then
     # Get last user message with string content (real human input, not tool results)
     LAST_HUMAN_TEXT=$(jq -rs '[.[] | select(.type == "user" and (.message.content | type == "string"))] | last | .message.content // ""' "$TRANSCRIPT_PATH" 2>/dev/null)
 
-    # Get last assistant message with text content
-    LAST_ASSISTANT_TEXT=$(jq -rs '[.[] | select(.type == "assistant")] | last | .message.content | if type == "array" then [.[] | select(.type == "text") | .text] | join("\n") else . // "" end' "$TRANSCRIPT_PATH" 2>/dev/null)
+    # Get all assistant messages' text content (combined, since responses can span multiple messages)
+    LAST_ASSISTANT_TEXT=$(jq -rs '[.[] | select(.type == "assistant") | .message.content | if type == "array" then [.[] | select(.type == "text") | .text] else [. // ""] end] | flatten | map(select(. != "")) | join("\n\n")' "$TRANSCRIPT_PATH" 2>/dev/null)
 
     # Get todo status
     TODO_STATUS=$(parse_todos "$TRANSCRIPT_PATH")
