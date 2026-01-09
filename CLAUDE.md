@@ -2,14 +2,14 @@
 
 ## Hooks 수정 시 주의사항
 
-`hooks/` 디렉토리의 스크립트(예: `attention.sh`)를 수정할 때는 **반드시 두 곳을 함께 수정**해야 한다:
+`hooks/scripts/` 디렉토리의 스크립트(예: `attention.sh`)를 수정할 때는 **반드시 두 곳을 함께 수정**해야 한다:
 
-1. **이 repo의 파일**: `hooks/attention.sh`
-2. **로컬 머신의 실제 hook**: `~/.claude/hooks/attention.sh`
+1. **이 repo의 파일**: `hooks/scripts/attention.sh`
+2. **로컬 머신의 실제 hook**: `~/.claude/hooks/attention.sh` (수동 설치한 경우에만)
 
-repo 파일만 수정하면 실제 동작에 반영되지 않고, 로컬 파일만 수정하면 변경 이력이 남지 않는다.
+플러그인으로 설치한 경우(`--plugin-dir`)에는 repo 파일만 수정하면 된다. 수동 설치한 경우에는 로컬 파일도 함께 수정해야 한다.
 
-또한 동작 수정은 언제나 테스트되어야 한다. 테스트(예: `hooks/attention.test.sh`)를 업데이트할 여지가 있는지도 꼭 살펴라.
+또한 동작 수정은 언제나 테스트되어야 한다. 테스트(`hooks/scripts/attention.test.sh`)를 업데이트할 여지가 있는지도 꼭 살펴라.
 
 ## 문서 업데이트 필수
 
