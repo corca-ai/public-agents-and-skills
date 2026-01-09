@@ -46,7 +46,7 @@ INPUT=$(cat)
 TRANSCRIPT_PATH=$(echo "$INPUT" | jq -r '.transcript_path // empty')
 
 # === HELPER FUNCTIONS ===
-# Truncate text to first 3 lines + ... + last 3 lines
+# Truncate text to first N lines + ... + last N lines
 truncate_text() {
     local text="$1"
     local line_count=$(echo "$text" | wc -l)
@@ -57,7 +57,7 @@ truncate_text() {
         local first=$(echo "$text" | head -n 5)
         local last=$(echo "$text" | tail -n 5)
         echo "$first"
-        echo "..."
+        echo "\n...(truncated)...\n"
         echo "$last"
     fi
 }
