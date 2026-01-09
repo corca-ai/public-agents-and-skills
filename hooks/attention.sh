@@ -130,8 +130,12 @@ if [ -n "$TRANSCRIPT_PATH" ] && [ -f "$TRANSCRIPT_PATH" ]; then
     # Get last user message with actual text (skip tool_result-only messages)
     LAST_HUMAN_TEXT=$(jq -rs '[.[] | select(.type == "user") | select((.message.content | type == "string") or (.message.content | type == "array" and any(.[]; type == "string" or .type == "text")))] | last | .message.content | if type == "string" then . elif type == "array" then [.[] | select(type == "string" or .type == "text") | if type == "string" then . else .text end] | join("\n") else "" end // ""' "$TRANSCRIPT_PATH" 2>/dev/null)
 
-    # Get all assistant messages' text content (combined, since responses can span multiple messages)
-    LAST_ASSISTANT_TEXT=$(jq -rs '[.[] | select(.type == "assistant") | .message.content | if type == "array" then [.[] | select(.type == "text") | .text] else [. // ""] end] | flatten | map(select(. != "")) | join("\n\n")' "$TRANSCRIPT_PATH" 2>/dev/null)
+    # Get assistant messages after the last user message (current turn only)
+    LAST_ASSISTANT_TEXT=$(jq -rs '
+      . as $all |
+      ([to_entries[] | select(.value.type == "user") | select(.value.message.content | (type == "string") or (type == "array" and any(type == "string" or .type == "text"))) | .key] | last // -1) as $last_user_idx |
+      $all | [to_entries[] | select(.key > $last_user_idx and .value.type == "assistant") | .value.message.content | if type == "array" then [.[] | select(.type == "text") | .text] else [. // ""] end] | flatten | map(select(. != "")) | join("\n\n")
+    ' "$TRANSCRIPT_PATH" 2>/dev/null)
 
     # Get todo status
     TODO_STATUS=$(parse_todos "$TRANSCRIPT_PATH")

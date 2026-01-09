@@ -132,16 +132,19 @@ assert_eq "Real user request" "$RESULT" "LAST_HUMAN_TEXT: skip tool_result-only 
 echo ""
 echo "=== Testing LAST_ASSISTANT_TEXT extraction ==="
 
+# Helper: the new jq query for assistant text (current turn only)
+JQ_ASSISTANT='. as $all | ([to_entries[] | select(.value.type == "user") | select(.value.message.content | (type == "string") or (type == "array" and any(type == "string" or .type == "text"))) | .key] | last // -1) as $last_user_idx | $all | [to_entries[] | select(.key > $last_user_idx and .value.type == "assistant") | .value.message.content | if type == "array" then [.[] | select(.type == "text") | .text] else [. // ""] end] | flatten | map(select(. != "")) | join("\n\n")'
+
 # Test: single assistant message
 cat > "$TEMP_DIR/transcript_single_assistant.jsonl" << 'EOF'
 {"type":"user","message":{"content":"Request"}}
 {"type":"assistant","message":{"content":[{"type":"text","text":"Single response"}]}}
 EOF
 
-RESULT=$(jq -rs '[.[] | select(.type == "assistant") | .message.content | if type == "array" then [.[] | select(.type == "text") | .text] else [. // ""] end] | flatten | map(select(. != "")) | join("\n\n")' "$TEMP_DIR/transcript_single_assistant.jsonl")
+RESULT=$(jq -rs "$JQ_ASSISTANT" "$TEMP_DIR/transcript_single_assistant.jsonl")
 assert_eq "Single response" "$RESULT" "LAST_ASSISTANT_TEXT: single message"
 
-# Test: multiple assistant messages (tool calls interleaved)
+# Test: multiple assistant messages (tool calls interleaved, same turn)
 cat > "$TEMP_DIR/transcript_multi_assistant.jsonl" << 'EOF'
 {"type":"user","message":{"content":"Request"}}
 {"type":"assistant","message":{"content":[{"type":"text","text":"First response"},{"type":"tool_use","name":"Bash"}]}}
@@ -149,21 +152,32 @@ cat > "$TEMP_DIR/transcript_multi_assistant.jsonl" << 'EOF'
 {"type":"assistant","message":{"content":[{"type":"text","text":"Second response after tool"}]}}
 EOF
 
-RESULT=$(jq -rs '[.[] | select(.type == "assistant") | .message.content | if type == "array" then [.[] | select(.type == "text") | .text] else [. // ""] end] | flatten | map(select(. != "")) | join("\n\n")' "$TEMP_DIR/transcript_multi_assistant.jsonl")
+RESULT=$(jq -rs "$JQ_ASSISTANT" "$TEMP_DIR/transcript_multi_assistant.jsonl")
 EXPECTED="First response
 
 Second response after tool"
-assert_eq "$EXPECTED" "$RESULT" "LAST_ASSISTANT_TEXT: multiple messages combined"
+assert_eq "$EXPECTED" "$RESULT" "LAST_ASSISTANT_TEXT: multiple messages combined (same turn)"
+
+# Test: only current turn responses (not previous turns)
+cat > "$TEMP_DIR/transcript_current_turn.jsonl" << 'EOF'
+{"type":"user","message":{"content":"First request"}}
+{"type":"assistant","message":{"content":[{"type":"text","text":"Old response from previous turn"}]}}
+{"type":"user","message":{"content":"Second request"}}
+{"type":"assistant","message":{"content":[{"type":"text","text":"Current turn response"}]}}
+EOF
+
+RESULT=$(jq -rs "$JQ_ASSISTANT" "$TEMP_DIR/transcript_current_turn.jsonl")
+assert_eq "Current turn response" "$RESULT" "LAST_ASSISTANT_TEXT: only current turn (not previous)"
 
 # Test: assistant message with no text (only tool calls)
 cat > "$TEMP_DIR/transcript_no_text.jsonl" << 'EOF'
 {"type":"user","message":{"content":"Request"}}
-{"type":"assistant","message":{"content":[{"type":"text","text":"Has text"}]}}
+{"type":"assistant","message":{"content":[{"type":"text","text":"Has text"},{"type":"tool_use","name":"Bash"}]}}
 {"type":"user","message":{"content":[{"type":"tool_result","content":"result"}]}}
 {"type":"assistant","message":{"content":[{"type":"tool_use","name":"Bash"}]}}
 EOF
 
-RESULT=$(jq -rs '[.[] | select(.type == "assistant") | .message.content | if type == "array" then [.[] | select(.type == "text") | .text] else [. // ""] end] | flatten | map(select(. != "")) | join("\n\n")' "$TEMP_DIR/transcript_no_text.jsonl")
+RESULT=$(jq -rs "$JQ_ASSISTANT" "$TEMP_DIR/transcript_no_text.jsonl")
 assert_eq "Has text" "$RESULT" "LAST_ASSISTANT_TEXT: filters out tool-only messages"
 
 
