@@ -19,6 +19,9 @@
 # Slack → 마크다운 변환 스킬
 /plugin install slack-to-md@corca-plugins
 
+# Tidying 제안 스킬
+/plugin install suggest-tidyings@corca-plugins
+
 # 대기 알림 훅
 /plugin install attention-hook@corca-plugins
 ```
@@ -58,6 +61,26 @@
   - OAuth scopes: `channels:history`, `channels:join`, `users:read`
   - `plugins/slack-to-md/skills/slack-to-md/.env.local`에 `BOT_TOKEN=xoxb-...` 설정
 
+### [suggest-tidyings](plugins/suggest-tidyings/skills/suggest-tidyings/SKILL.md)
+
+Kent Beck의 "Tidy First?" 철학에 기반하여 최근 커밋들을 분석하고 안전한 리팩토링 기회를 찾아주는 스킬입니다. Sub-agent를 병렬로 활용하여 여러 커밋을 동시에 분석합니다.
+
+**사용법**:
+- 현재 브랜치 분석: `/suggest-tidyings`
+- 특정 브랜치 분석: `/suggest-tidyings develop`
+
+**주요 기능**:
+- 최근 non-tidying 커밋에서 tidying 기회 탐색
+- 각 커밋별 병렬 분석 (Task tool + sub-agents)
+- Guard Clauses, Dead Code Removal, Extract Helper 등 8가지 tidying 기법 적용
+- 안전성 검증: HEAD에서 이미 변경된 코드는 제외
+- `파일:라인범위 — 설명 (이유: ...)` 형식의 실행 가능한 제안
+
+**핵심 원칙**:
+- 로직 변경 없이 가독성만 개선하는 안전한 변경
+- 한 커밋으로 분리 가능한 원자적 수정
+- 누구나 쉽게 리뷰할 수 있는 간단한 diff
+
 ### [attention-hook](plugins/attention-hook/hooks/scripts/attention.sh)
 
 Claude Code가 사용자의 입력을 60초 이상 기다릴 때(`idle_prompt` matcher 이용) Slack 또는 Discord로 푸시 알림을 보내는 훅입니다. 알림에는 작업 컨텍스트(사용자 요청, Claude 응답, Todo 상태)가 포함되어 어떤 작업인지 즉시 파악할 수 있습니다. 원격 서버에 세팅해뒀을 때 특히 유용합니다.
@@ -79,9 +102,9 @@ DISCORD_WEBHOOK_URL=""  # Discord 사용 시 설정
 2. 플러그인 설치 후 `hooks/hooks.json`이 자동으로 적용됩니다.
 
 **알림 내용**:
-- :memo: 사용자 요청 내용 (처음/끝 5줄씩 truncate)
-- :robot_face: 요청에 대한 Claude의 응답 (처음/끝 5줄씩 truncate)
-- :white_check_mark: Todo: 완료/진행중/대기 항목 수 및 각 항목 내용
+- 📝 사용자 요청 내용 (처음/끝 5줄씩 truncate)
+- 🤖 요청에 대한 Claude의 응답 (처음/끝 5줄씩 truncate)
+- ✅ Todo: 완료/진행중/대기 항목 수 및 각 항목 내용
 
 **알림 예시(Slack)**:
 
@@ -92,7 +115,7 @@ DISCORD_WEBHOOK_URL=""  # Discord 사용 시 설정
 ```
 corca-plugins/
 ├── .claude-plugin/
-│   └── marketplace.json     # 마켓플레이스 매니페스트
+│   └── marketplace.json
 ├── plugins/
 │   ├── clarify/
 │   │   ├── .claude-plugin/
@@ -104,6 +127,13 @@ corca-plugins/
 │   │   │   └── plugin.json
 │   │   └── skills/slack-to-md/
 │   │       ├── SKILL.md
+│   │       └── scripts/
+│   ├── suggest-tidyings/
+│   │   ├── .claude-plugin/
+│   │   │   └── plugin.json
+│   │   └── skills/suggest-tidyings/
+│   │       ├── SKILL.md
+│   │       ├── references/
 │   │       └── scripts/
 │   └── attention-hook/
 │       ├── .claude-plugin/

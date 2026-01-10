@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "A collection of Claude Code plugins for AI-Native Product Teams",
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "plugins": [
     {
@@ -20,6 +20,12 @@
       "source": "./plugins/slack-to-md",
       "description": "A skill that converts Slack threads into Markdown",
       "keywords": ["slack", "markdown", "documentation"]
+    },
+    {
+      "name": "suggest-tidyings",
+      "source": "./plugins/suggest-tidyings",
+      "description": "A skill that suggests safe refactoring opportunities based on Kent Beck's Tidy First? philosophy",
+      "keywords": ["refactoring", "tidying", "code-quality", "tidy-first"]
     },
     {
       "name": "attention-hook",
