@@ -1,0 +1,10 @@
+{
+  "name": "clarify",
+  "description": "모호한 요구사항을 명확한 스펙으로 변환하는 스킬",
+  "version": "1.0.0",
+  "author": {
+    "name": "Corca",
+    "url": "https://www.corca.ai/"
+  },
+  "repository": "https://github.com/corca-ai/claude-plugins"
+}

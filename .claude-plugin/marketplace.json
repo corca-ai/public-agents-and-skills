@@ -1,0 +1,31 @@
+{
+  "name": "corca-plugins",
+  "owner": {
+    "name": "Corca",
+    "email": "contact@corca.ai"
+  },
+  "metadata": {
+    "description": "AI-Native Product Team을 위한 Claude Code 플러그인 모음",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "clarify",
+      "source": "./plugins/clarify",
+      "description": "모호한 요구사항을 명확한 스펙으로 변환하는 스킬",
+      "keywords": ["requirements", "specification", "clarification"]
+    },
+    {
+      "name": "slack-to-md",
+      "source": "./plugins/slack-to-md",
+      "description": "Slack 스레드를 마크다운으로 변환하는 스킬",
+      "keywords": ["slack", "markdown", "documentation"]
+    },
+    {
+      "name": "attention-hook",
+      "source": "./plugins/attention-hook",
+      "description": "Claude Code 대기 시 Slack/Discord 알림 훅",
+      "keywords": ["notification", "slack", "discord", "hook"]
+    }
+  ]
+}
