@@ -1,0 +1,10 @@
+{
+  "name": "attention-hook",
+  "description": "A hook that sends Slack/Discord notifications when Claude Code is waiting",
+  "version": "1.0.0",
+  "author": {
+    "name": "Corca",
+    "url": "https://www.corca.ai/"
+  },
+  "repository": "https://github.com/corca-ai/claude-plugins"
+}

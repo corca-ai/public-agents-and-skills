@@ -1,0 +1,37 @@
+{
+  "name": "corca-plugins",
+  "owner": {
+    "name": "Corca",
+    "email": "contact@corca.ai"
+  },
+  "metadata": {
+    "description": "A collection of Claude Code plugins for AI-Native Product Teams",
+    "version": "1.1.0"
+  },
+  "plugins": [
+    {
+      "name": "clarify",
+      "source": "./plugins/clarify",
+      "description": "A skill that transforms ambiguous requirements into clear specifications",
+      "keywords": ["requirements", "specification", "clarification"]
+    },
+    {
+      "name": "slack-to-md",
+      "source": "./plugins/slack-to-md",
+      "description": "A skill that converts Slack threads into Markdown",
+      "keywords": ["slack", "markdown", "documentation"]
+    },
+    {
+      "name": "suggest-tidyings",
+      "source": "./plugins/suggest-tidyings",
+      "description": "A skill that suggests safe refactoring opportunities based on Kent Beck's Tidy First? philosophy",
+      "keywords": ["refactoring", "tidying", "code-quality", "tidy-first"]
+    },
+    {
+      "name": "attention-hook",
+      "source": "./plugins/attention-hook",
+      "description": "A hook that sends Slack/Discord notifications when Claude Code is waiting",
+      "keywords": ["notification", "slack", "discord", "hook"]
+    }
+  ]
+}

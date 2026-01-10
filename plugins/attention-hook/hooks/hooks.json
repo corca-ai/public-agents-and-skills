@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "idle_prompt",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/attention.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
