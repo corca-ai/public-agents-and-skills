@@ -1,6 +1,6 @@
 {
   "name": "attention-hook",
-  "description": "Claude Code 대기 시 Slack/Discord 알림 훅",
+  "description": "A hook that sends Slack/Discord notifications when Claude Code is waiting",
   "version": "1.0.0",
   "author": {
     "name": "Corca",

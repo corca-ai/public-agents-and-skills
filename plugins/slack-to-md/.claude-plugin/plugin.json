@@ -1,6 +1,6 @@
 {
   "name": "slack-to-md",
-  "description": "Slack 스레드를 마크다운으로 변환하는 스킬",
+  "description": "A skill that converts Slack threads into Markdown",
   "version": "1.0.0",
   "author": {
     "name": "Corca",

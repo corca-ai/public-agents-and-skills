@@ -1,6 +1,6 @@
 {
   "name": "clarify",
-  "description": "모호한 요구사항을 명확한 스펙으로 변환하는 스킬",
+  "description": "A skill that transforms ambiguous requirements into clear specifications",
   "version": "1.0.0",
   "author": {
     "name": "Corca",
