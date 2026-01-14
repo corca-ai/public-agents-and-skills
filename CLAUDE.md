@@ -1,12 +1,12 @@
 ## Before You Start
 
-**Always** read the relevant documentation before modifying any code:
-
+**IMPORTANT**: Before modifying ANY code, you MUST:
 1. Read `README.md` — check if your changes affect documented content
 2. For plugin work, also read:
    - [Modifying/Testing/Deploying Plugins](docs/modifying-plugin.md)
    - [Adding New Plugins](docs/adding-plugin.md)
-3. Modify code
-4. Update any affected documentation
 
-Do not consider the task complete without updating related docs.
+Do NOT proceed with code changes until completing the above steps.
+
+After modifying code, update any affected documentation.
+Do NOT consider the task complete without updating related docs.

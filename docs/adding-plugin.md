@@ -4,6 +4,26 @@
 
 새 플러그인 추가 후 [marketplace.json](../.claude-plugin/marketplace.json)에서 적절하게 버전을 업데이트하라.
 
+## 스크립트 작성 원칙
+
+### 크로스 플랫폼 호환
+
+macOS와 Linux 모두에서 동작해야 한다:
+
+```bash
+# Bad: macOS only
+sed -i '' 's/foo/bar/' file.txt
+
+# Good: cross-platform
+sed 's/foo/bar/' file.txt > file.tmp && mv file.tmp file.txt
+# or
+grep -v 'pattern' file.txt > file.tmp && mv file.tmp file.txt
+```
+
+### 최소한의 의존성
+
+가능하면 bash, curl 등 기본 도구만으로 해결. 외부 의존성(python3 등)을 최소화하는 방향으로 구현할 것.
+
 ## AI_NATIVE_PRODUCT_TEAM.md 링크 검토
 
 새로운 플러그인을 추가할 때는 `AI_NATIVE_PRODUCT_TEAM.md`에 해당 플러그인 링크를 추가할 수 있는지 검토해야 한다.
