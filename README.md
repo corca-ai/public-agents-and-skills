@@ -10,25 +10,23 @@
 /plugin marketplace add corca-ai/claude-plugins
 ```
 
-### 2. 원하는 플러그인 설치
+### 2. 플러그인 오버뷰
 
-```bash
-# 요구사항 명확화 스킬
-/plugin install clarify@corca-plugins
+| 플러그인 | 유형 | 설명 |
+|---------|------|------|
+| [clarify](#clarify) | Skill | 모호한 요구사항을 명확하게 정리 |
+| [g-export](#g-export) | Skill | Google 문서를 로컬 파일로 다운로드 |
+| [slack-to-md](#slack-to-md) | Skill | Slack 메시지를 마크다운으로 변환 |
+| [suggest-tidyings](#suggest-tidyings) | Skill | 안전한 리팩토링 기회 제안 |
+| [attention-hook](#attention-hook) | Hook | 대기 상태일 때 Slack/Discord 알림 |
 
-# Slack → 마크다운 변환 스킬
-/plugin install slack-to-md@corca-plugins
-
-# Tidying 제안 스킬
-/plugin install suggest-tidyings@corca-plugins
-
-# 대기 알림 훅
-/plugin install attention-hook@corca-plugins
-```
-
-## Plugins
+## Skills
 
 ### [clarify](plugins/clarify/skills/clarify/SKILL.md)
+
+```bash
+/plugin install clarify@corca-plugins
+```
 
 모호하거나 불명확한 요구사항을 반복적인 질문을 통해 명확하고 실행 가능한 사양으로 변환하는 스킬입니다. [Team Attention](https://github.com/team-attention)에서 만든 [Clarify 스킬](https://github.com/team-attention/plugins-for-claude-natives/blob/main/plugins/clarify/SKILL.md)을 가져와서 커스터마이즈했습니다. (사용법 참조: 정구봉님 [링크드인 포스트](https://www.linkedin.com/posts/gb-jeong_%ED%81%B4%EB%A1%9C%EB%93%9C%EC%BD%94%EB%93%9C%EA%B0%80-%EA%B0%9D%EA%B4%80%EC%8B%9D%EC%9C%BC%EB%A1%9C-%EC%A7%88%EB%AC%B8%ED%95%98%EA%B2%8C-%ED%95%98%EB%8A%94-skills%EB%A5%BC-%EC%82%AC%EC%9A%A9%ED%95%B4%EB%B3%B4%EC%84%B8%EC%9A%94-clarify-activity-7413349697022570496-qLts))
 
@@ -39,7 +37,33 @@
 - Before/After 비교로 명확해진 결과 제시
 - 명확해진 요구사항을 파일로 저장하는 옵션 제공. 필요시 이 문서를 Plan 모드에 넣어서 구현하면 됨
 
+### [g-export](plugins/g-export/skills/g-export/SKILL.md)
+
+```bash
+/plugin install g-export@corca-plugins
+```
+
+공개된 Google 문서(Slides, Docs, Sheets)를 로컬 파일로 다운로드하는 스킬입니다.
+
+**사용법**:
+- 명시적 호출: `/g-export`
+- URL 감지: Google 문서 URL을 에이전트가 발견하면 자동으로 다운로드 제안
+
+**지원 포맷**:
+- **Google Slides**: pptx, odp, pdf, txt (기본: txt)
+- **Google Docs**: docx, odt, pdf, txt, epub, html, md (기본: md)
+- **Google Sheets**: xlsx, ods, pdf, csv, tsv (기본: csv)
+
+**저장 위치**: `/g-exports/` 폴더
+
+**주의사항**:
+- Sheets의 csv/tsv는 기본적으로 첫 번째 시트만 다운로드 (다른 시트는 `gid` 파라미터 필요)
+
 ### [slack-to-md](plugins/slack-to-md/skills/slack-to-md/SKILL.md)
+
+```bash
+/plugin install slack-to-md@corca-plugins
+```
 
 1개 이상의 Slack 메시지 URL을 단일한 마크다운 문서로 변환하는 스킬입니다.
 
@@ -63,6 +87,10 @@
 
 ### [suggest-tidyings](plugins/suggest-tidyings/skills/suggest-tidyings/SKILL.md)
 
+```bash
+/plugin install suggest-tidyings@corca-plugins
+```
+
 Kent Beck의 "Tidy First?" 철학에 기반하여 최근 커밋들을 분석하고 안전한 리팩토링 기회를 찾아주는 스킬입니다. Sub-agent를 병렬로 활용하여 여러 커밋을 동시에 분석합니다.
 
 **사용법**:
@@ -81,7 +109,13 @@ Kent Beck의 "Tidy First?" 철학에 기반하여 최근 커밋들을 분석하�
 - 한 커밋으로 분리 가능한 원자적 수정
 - 누구나 쉽게 리뷰할 수 있는 간단한 diff
 
+## Hooks
+
 ### [attention-hook](plugins/attention-hook/hooks/scripts/attention.sh)
+
+```bash
+/plugin install attention-hook@corca-plugins
+```
 
 Claude Code가 사용자의 입력을 60초 이상 기다릴 때(`idle_prompt` matcher 이용) Slack 또는 Discord로 푸시 알림을 보내는 훅입니다. 알림에는 작업 컨텍스트(사용자 요청, Claude 응답, Todo 상태)가 포함되어 어떤 작업인지 즉시 파악할 수 있습니다. 원격 서버에 세팅해뒀을 때 특히 유용합니다.
 
@@ -109,40 +143,6 @@ DISCORD_WEBHOOK_URL=""  # Discord 사용 시 설정
 **알림 예시(Slack)**:
 
 ![Slack 알림 예시](assets/slack-message-example.jpg)
-
-## Marketplace 구조
-
-```
-corca-plugins/
-├── .claude-plugin/
-│   └── marketplace.json
-├── plugins/
-│   ├── clarify/
-│   │   ├── .claude-plugin/
-│   │   │   └── plugin.json
-│   │   └── skills/clarify/
-│   │       └── SKILL.md
-│   ├── slack-to-md/
-│   │   ├── .claude-plugin/
-│   │   │   └── plugin.json
-│   │   └── skills/slack-to-md/
-│   │       ├── SKILL.md
-│   │       └── scripts/
-│   ├── suggest-tidyings/
-│   │   ├── .claude-plugin/
-│   │   │   └── plugin.json
-│   │   └── skills/suggest-tidyings/
-│   │       ├── SKILL.md
-│   │       ├── references/
-│   │       └── scripts/
-│   └── attention-hook/
-│       ├── .claude-plugin/
-│       │   └── plugin.json
-│       └── hooks/
-│           ├── hooks.json
-│           └── scripts/
-└── README.md
-```
 
 ## 라이선스
 

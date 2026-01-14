@@ -32,6 +32,12 @@
       "source": "./plugins/attention-hook",
       "description": "A hook that sends Slack/Discord notifications when Claude Code is waiting",
       "keywords": ["notification", "slack", "discord", "hook"]
+    },
+    {
+      "name": "g-export",
+      "source": "./plugins/g-export",
+      "description": "A skill that downloads public Google Slides, Docs, and Sheets to local files",
+      "keywords": ["google", "slides", "docs", "sheets", "export", "download"]
     }
   ]
 }
