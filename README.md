@@ -6,6 +6,8 @@
 
 ### 1. Marketplace 추가
 
+클로드 코드 내에서 다음을 실행하세요:
+
 ```bash
 /plugin marketplace add corca-ai/claude-plugins
 ```
@@ -14,6 +16,12 @@
 
 ```bash
 /plugin marketplace update
+```
+
+개별 플러그인이 업데이트된 경우 marketplace update 후 터미널에서 다음 명령어를 실행하는 게 가장 확실합니다:
+
+```bash
+claude plugin update <plugin-name>@corca-plugins
 ```
 
 업데이트 후 Claude Code를 재시작하면 새 플러그인 사용이 가능해집니다.
