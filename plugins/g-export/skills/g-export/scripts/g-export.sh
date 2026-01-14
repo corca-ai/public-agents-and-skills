@@ -40,8 +40,10 @@ HEADER=$(curl -sLI "$EXPORT_URL" | grep -i '^content-disposition:' | tr -d '\r')
 # Parse filename from header
 # Try filename*=UTF-8'' first (RFC 5987), then fallback to filename=
 if [[ "$HEADER" =~ filename\*=UTF-8\'\'([^[:space:]]+) ]]; then
-    # URL-decode the filename
-    FILENAME=$(python3 -c "import urllib.parse, sys; print(urllib.parse.unquote(sys.argv[1]))" "${BASH_REMATCH[1]}")
+    # URL-decode the filename (pure bash: replace % with \x, then interpret escape sequences)
+    ENCODED="${BASH_REMATCH[1]}"
+    HEX_STRING="${ENCODED//\%/\\x}"
+    printf -v FILENAME "%b" "$HEX_STRING"
 elif [[ "$HEADER" =~ filename=\"([^\"]+)\" ]]; then
     FILENAME="${BASH_REMATCH[1]}"
 else
@@ -57,7 +59,8 @@ curl -sL -o "$OUTPUT_PATH" "$EXPORT_URL"
 # For markdown files, remove base64 embedded images (they waste context for LLM analysis)
 # Google Docs uses reference-style images: [imageN]: <data:image/...>
 if [[ "$FORMAT" == "md" ]]; then
-    sed -i '' '/^\[image[0-9]*\]: <data:image/d' "$OUTPUT_PATH"
+    grep -v '^\[image[0-9]*\]: <data:image' "$OUTPUT_PATH" > "${OUTPUT_PATH}.tmp" || true
+    mv "${OUTPUT_PATH}.tmp" "$OUTPUT_PATH"
 fi
 
 # Check if download succeeded (non-empty file)
