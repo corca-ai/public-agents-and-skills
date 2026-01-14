@@ -33,13 +33,31 @@ mkdir -p "$OUTPUT_DIR"
 # Build export URL
 EXPORT_URL="https://docs.google.com/${TYPE}/d/${ID}/export?format=${FORMAT}"
 
-# Generate filename
-FILENAME="${ID}.${FORMAT}"
+# Get filename from Content-Disposition header
+echo "Downloading ${TYPE} as ${FORMAT}..."
+HEADER=$(curl -sLI "$EXPORT_URL" | grep -i '^content-disposition:' | tr -d '\r')
+
+# Parse filename from header
+# Try filename*=UTF-8'' first (RFC 5987), then fallback to filename=
+if [[ "$HEADER" =~ filename\*=UTF-8\'\'([^[:space:]]+) ]]; then
+    # URL-decode the filename
+    FILENAME=$(python3 -c "import urllib.parse, sys; print(urllib.parse.unquote(sys.argv[1]))" "${BASH_REMATCH[1]}")
+elif [[ "$HEADER" =~ filename=\"([^\"]+)\" ]]; then
+    FILENAME="${BASH_REMATCH[1]}"
+else
+    # Fallback to document ID
+    FILENAME="${ID}.${FORMAT}"
+fi
+
 OUTPUT_PATH="${OUTPUT_DIR}/${FILENAME}"
 
 # Download
-echo "Downloading ${TYPE} as ${FORMAT}..."
 curl -sL -o "$OUTPUT_PATH" "$EXPORT_URL"
+
+# For markdown files, remove base64 embedded images (they waste context for LLM analysis)
+if [[ "$FORMAT" == "md" ]]; then
+    sed -i '' 's/!\[[^]]*\](data:image[^)]*)/[image removed]/g' "$OUTPUT_PATH"
+fi
 
 # Check if download succeeded (non-empty file)
 if [[ ! -s "$OUTPUT_PATH" ]]; then

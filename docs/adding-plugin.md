@@ -2,6 +2,8 @@
 
 플러그인 구조, `plugin.json` 스키마, `marketplace.json` 스키마 등은 [claude-marketplace.md](claude-marketplace.md)를 참조하라.
 
+새 플러그인 추가 후 [marketplace.json](../.claude-plugin/marketplace.json)에서 적절하게 버전을 업데이트하라.
+
 ## AI_NATIVE_PRODUCT_TEAM.md 링크 검토
 
 새로운 플러그인을 추가할 때는 `AI_NATIVE_PRODUCT_TEAM.md`에 해당 플러그인 링크를 추가할 수 있는지 검토해야 한다.

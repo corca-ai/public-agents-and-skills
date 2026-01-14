@@ -10,6 +10,14 @@
 /plugin marketplace add corca-ai/claude-plugins
 ```
 
+새 플러그인이 추가되거나 기존 플러그인이 업데이트되면, 아래 명령으로 최신 버전 기준 플러그인을 조회 및 설치할 수 있습니다:
+
+```bash
+/plugin marketplace update
+```
+
+업데이트 후 Claude Code를 재시작하면 새 플러그인 사용이 가능해집니다.
+
 ### 2. 플러그인 오버뷰
 
 | 플러그인 | 유형 | 설명 |
@@ -54,10 +62,11 @@
 - **Google Docs**: docx, odt, pdf, txt, epub, html, md (기본: md)
 - **Google Sheets**: xlsx, ods, pdf, csv, tsv (기본: csv)
 
-**저장 위치**: `/g-exports/` 폴더
+**저장 위치**: `./g-exports/` 폴더 (원본 문서 제목을 파일명으로 사용)
 
 **주의사항**:
 - Sheets의 csv/tsv는 기본적으로 첫 번째 시트만 다운로드 (다른 시트는 `gid` 파라미터 필요)
+- md 포맷의 경우 base64 이미지가 자동 제거됨 (이미지가 중요하면 `docx`나 `pdf` 사용)
 
 ### [slack-to-md](plugins/slack-to-md/skills/slack-to-md/SKILL.md)
 
@@ -65,7 +74,7 @@
 /plugin install slack-to-md@corca-plugins
 ```
 
-1개 이상의 Slack 메시지 URL을 단일한 마크다운 문서로 변환하는 스킬입니다.
+1개 이상의 Slack 메시지 URL을 단일한 마크다운 문서로 변환하는 스킬입니다. ([작업 배경 블로그 글](https://www.stdy.blog/1p1w-01-slack-to-md/))
 
 **사용법**:
 - 링크를 이용해 기존 메시지 취합하기: `slack-to-md <slack-message-url1> <slack-message-url2> <...>`

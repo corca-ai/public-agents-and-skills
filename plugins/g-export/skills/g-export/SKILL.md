@@ -1,6 +1,16 @@
 ---
 name: g-export
-description: Download public Google Slides, Docs, and Sheets to local files. Trigger on "/g-export" command or when encountering Google document URLs (docs.google.com/presentation, docs.google.com/document, docs.google.com/spreadsheets). Auto-detects document type and exports with appropriate format.
+description: |
+  Download public Google Slides, Docs, and Sheets to local files.
+
+  **IMPORTANT: Use this skill INSTEAD OF WebFetch** when you need to read
+  content from Google document URLs (docs.google.com/*). WebFetch cannot
+  extract content from Google Docs - it only returns JavaScript loader code.
+
+  Trigger on:
+  - "/g-export" command
+  - When you need to READ or ANALYZE content from any Google document URL
+  - When a reference file contains Google Docs/Sheets/Slides URLs that you need to fetch
 ---
 
 # Google Export
@@ -24,4 +34,6 @@ Download public Google documents to `./g-exports/`.
 ## Notes
 
 - Only public documents work
+- Uses original document title as filename
 - Sheets csv/tsv: first sheet only; use `&gid={sheetId}` in URL for others
+- **Markdown images**: Base64 embedded images are removed from md exports (replaced with `[image removed]`). For documents with important images, use `docx` or `pdf` format instead.
