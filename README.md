@@ -68,13 +68,16 @@ claude plugin update <plugin-name>@corca-plugins
 **지원 포맷**:
 - **Google Slides**: pptx, odp, pdf, txt (기본: txt)
 - **Google Docs**: docx, odt, pdf, txt, epub, html, md (기본: md)
-- **Google Sheets**: xlsx, ods, pdf, csv, tsv (기본: csv)
+- **Google Sheets**: xlsx, ods, pdf, csv, tsv, toon (기본: toon)
+
+g-export는 LLM이 문서 내용을 쉽게 파악할 수 있도록 텍스트 기반 포맷을 기본으로 선택합니다. Sheets는 CSV 대신 [TOON](https://github.com/toon-format/toon)을 기본으로 사용하여 LLM 호환성을 높입니다. 설문/세션 형식의 TOON 데이터는 에이전트가 마크다운으로 변환하여 가독성을 높일 수 있습니다.
 
 **저장 위치**: `./g-exports/` 폴더 (원본 문서 제목을 파일명으로 사용)
 
 **주의사항**:
-- Sheets의 csv/tsv는 기본적으로 첫 번째 시트만 다운로드 (다른 시트는 `gid` 파라미터 필요)
-- md 포맷의 경우 base64 이미지가 자동 제거됨 (이미지가 중요하면 `docx`나 `pdf` 사용)
+- Sheets의 csv/tsv/toon은 기본적으로 첫 번째 시트만 다운로드 (다른 시트는 `gid` 파라미터 필요)
+- md 포맷은 base64 이미지가 자동 제거됨 (이미지가 중요하면 `docx`나 `pdf` 사용)
+- TOON 변환 가이드: [references/TOON.md](plugins/g-export/skills/g-export/references/TOON.md)
 
 ### [slack-to-md](plugins/slack-to-md/skills/slack-to-md/SKILL.md)
 

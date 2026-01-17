@@ -1,8 +1,19 @@
 #!/bin/bash
 # Usage: g-export.sh <google-doc-url> [format] [output-dir]
 # Downloads public Google Slides/Docs/Sheets to local files.
+#
+# Supported formats:
+# - Slides: pptx, odp, pdf, txt (default: txt)
+# - Docs: docx, odt, pdf, txt, epub, html, md (default: md)
+# - Sheets: xlsx, ods, pdf, csv, tsv, toon (default: toon)
+#
+# The 'toon' format (Token-Oriented Object Notation) is optimized for LLM consumption.
+# It provides clearer structure indication while handling multi-line content explicitly.
+# See: https://github.com/toon-format/toon
 
 set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 URL="$1"
 FORMAT="$2"
@@ -29,15 +40,27 @@ if [[ -z "$FORMAT" ]]; then
     case "$TYPE" in
         presentation) FORMAT="txt" ;;
         document)     FORMAT="md" ;;
-        spreadsheets) FORMAT="csv" ;;
+        spreadsheets) FORMAT="toon" ;;
     esac
+fi
+
+# Handle TOON format for spreadsheets (requires CSV conversion)
+CONVERT_TO_TOON=false
+DOWNLOAD_FORMAT="$FORMAT"
+if [[ "$FORMAT" == "toon" ]]; then
+    if [[ "$TYPE" != "spreadsheets" ]]; then
+        echo "Error: TOON format is only supported for Google Sheets" >&2
+        exit 1
+    fi
+    CONVERT_TO_TOON=true
+    DOWNLOAD_FORMAT="csv"
 fi
 
 # Create output directory
 mkdir -p "$OUTPUT_DIR"
 
 # Build export URL
-EXPORT_URL="https://docs.google.com/${TYPE}/d/${ID}/export?format=${FORMAT}"
+EXPORT_URL="https://docs.google.com/${TYPE}/d/${ID}/export?format=${DOWNLOAD_FORMAT}"
 
 # Add gid parameter for spreadsheets (to export specific sheet)
 if [[ -n "$GID" && "$TYPE" == "spreadsheets" ]]; then
@@ -45,7 +68,7 @@ if [[ -n "$GID" && "$TYPE" == "spreadsheets" ]]; then
 fi
 
 # Get filename from Content-Disposition header
-echo "Downloading ${TYPE} as ${FORMAT}..."
+echo "Downloading ${TYPE} as ${DOWNLOAD_FORMAT}..."
 HEADER=$(curl -sLI "$EXPORT_URL" | grep -i '^content-disposition:' | tr -d '\r')
 
 # Parse filename from header
@@ -79,6 +102,20 @@ if [[ ! -s "$OUTPUT_PATH" ]]; then
     echo "Error: Download failed or document is not publicly accessible" >&2
     rm -f "$OUTPUT_PATH"
     exit 1
+fi
+
+# Convert to TOON format if requested
+if [[ "$CONVERT_TO_TOON" == "true" ]]; then
+    echo "Converting to TOON format..."
+    TOON_PATH="${OUTPUT_PATH%.csv}.toon"
+    if "$SCRIPT_DIR/csv-to-toon.sh" "$OUTPUT_PATH" > "$TOON_PATH"; then
+        rm -f "$OUTPUT_PATH"  # Remove intermediate CSV file
+        OUTPUT_PATH="$TOON_PATH"
+    else
+        echo "Error: Failed to convert to TOON format" >&2
+        rm -f "$TOON_PATH"
+        exit 1
+    fi
 fi
 
 echo "Saved to: $OUTPUT_PATH"
