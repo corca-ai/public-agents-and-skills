@@ -169,7 +169,11 @@ Kent Beck의 "Tidy First?" 철학에 기반하여 최근 커밋들을 분석하�
 /plugin install attention-hook@corca-plugins
 ```
 
-Claude Code가 사용자의 입력을 60초 이상 기다릴 때(`idle_prompt` matcher 이용) Slack 또는 Discord로 푸시 알림을 보내는 훅입니다. 알림에는 작업 컨텍스트(사용자 요청, Claude 응답, Todo 상태)가 포함되어 어떤 작업인지 즉시 파악할 수 있습니다. 원격 서버에 세팅해뒀을 때 특히 유용합니다.
+Claude Code가 사용자의 입력을 기다릴 때 Slack 또는 Discord로 푸시 알림을 보내는 훅입니다. 알림에는 작업 컨텍스트(사용자 요청, Claude 응답, 질문 내용, Todo 상태)가 포함되어 어떤 작업인지 즉시 파악할 수 있습니다. 원격 서버에 세팅해뒀을 때 특히 유용합니다.
+
+**알림 트리거 조건**:
+- `idle_prompt`: 사용자 입력을 60초 이상 기다릴 때 (Claude Code 내부 구현, 변경 불가)
+- `AskUserQuestion`: Claude가 질문을 하고 30초 이상 응답이 없을 때 (`CLAUDE_ATTENTION_DELAY` 환경변수로 조정 가능)
 
 > **호환성 주의**: 이 스크립트는 Claude Code의 내부 transcript 구조를 `jq`로 파싱합니다. Claude Code 버전이 업데이트되면 동작하지 않을 수 있습니다. 테스트된 버전 정보는 스크립트 주석을 참조하세요.
 
@@ -183,6 +187,7 @@ Claude Code가 사용자의 입력을 60초 이상 기다릴 때(`idle_prompt` m
 # ~/.claude/.env
 SLACK_WEBHOOK_URL="" # Slack 사용 시 설정
 DISCORD_WEBHOOK_URL=""  # Discord 사용 시 설정
+CLAUDE_ATTENTION_DELAY=30  # AskUserQuestion 알림 지연 시간 (초, 기본값: 30)
 ```
 
 2. 플러그인 설치 후 `hooks/hooks.json`이 자동으로 적용됩니다.
@@ -190,11 +195,14 @@ DISCORD_WEBHOOK_URL=""  # Discord 사용 시 설정
 **알림 내용**:
 - 📝 사용자 요청 내용 (처음/끝 5줄씩 truncate)
 - 🤖 요청에 대한 Claude의 응답 (처음/끝 5줄씩 truncate)
+- ❓ 질문 대기 중: AskUserQuestion의 질문과 선택지 (있을 경우)
 - ✅ Todo: 완료/진행중/대기 항목 수 및 각 항목 내용
 
 **알림 예시(Slack)**:
 
-<img src="assets/slack-message-example.jpg" alt="Slack 알림 예시" width="600">
+<img src="assets/attention-hook-normal-response.png" alt="Slack 알림 예시" width="600">
+
+<img src="assets/attention-hook-AskUserQuestion.png" alt="Slack 알림 예시" width="600">
 
 ## 라이선스
 

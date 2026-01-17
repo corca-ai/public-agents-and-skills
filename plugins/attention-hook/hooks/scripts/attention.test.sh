@@ -1,8 +1,8 @@
 #!/bin/bash
-# Test cases for attention.sh
+# Test cases for attention.sh and parse-transcript.sh
 # Run: ./hooks/scripts/attention.test.sh
 #
-# This test sources attention.sh to test the actual functions,
+# This test sources attention.sh and parse-transcript.sh to test the actual functions,
 # ensuring tests fail when the implementation changes.
 
 set -e
@@ -10,8 +10,9 @@ set -e
 # Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Source the actual attention.sh to get the real functions
+# Source the actual scripts to get the real functions
 source "$SCRIPT_DIR/attention.sh"
+source "$SCRIPT_DIR/parse-transcript.sh"
 
 PASSED=0
 FAILED=0
@@ -33,6 +34,36 @@ assert_eq() {
         echo -e "${RED}FAIL${NC}: $test_name"
         echo "  Expected: $expected"
         echo "  Actual:   $actual"
+        FAILED=$((FAILED + 1))
+    fi
+}
+
+assert_contains() {
+    local expected="$1"
+    local actual="$2"
+    local test_name="$3"
+
+    if [[ "$actual" == *"$expected"* ]]; then
+        echo -e "${GREEN}PASS${NC}: $test_name"
+        PASSED=$((PASSED + 1))
+    else
+        echo -e "${RED}FAIL${NC}: $test_name"
+        echo "  Expected to contain: $expected"
+        echo "  Actual: $actual"
+        FAILED=$((FAILED + 1))
+    fi
+}
+
+assert_not_empty() {
+    local actual="$1"
+    local test_name="$2"
+
+    if [ -n "$actual" ]; then
+        echo -e "${GREEN}PASS${NC}: $test_name"
+        PASSED=$((PASSED + 1))
+    else
+        echo -e "${RED}FAIL${NC}: $test_name"
+        echo "  Expected non-empty value"
         FAILED=$((FAILED + 1))
     fi
 }
@@ -85,79 +116,78 @@ RESULT=$(truncate_text "$INPUT_LONG")
 assert_eq "$EXPECTED_LONG" "$RESULT" "truncate_text: 12 lines truncated to 5+...+5"
 
 
-# === TEST: LAST_HUMAN_TEXT extraction ===
+# === TEST: parse_human_text ===
 echo ""
-echo "=== Testing LAST_HUMAN_TEXT extraction ==="
+echo "=== Testing parse_human_text ==="
 
 # Fixtures directory (relative to script location - one level up)
 FIXTURES_DIR="$SCRIPT_DIR/../fixtures"
 
-# Helper: the jq query for human text (same as attention.sh)
-JQ_HUMAN='[.[] | select(.type == "user" and .isMeta != true) |
-  select((.message.content | type == "string") or
-         (.message.content | type == "array" and any(.[]; type == "string" or .type == "text" or .type == "image")))] |
-  last |
-  .message.content |
-  if type == "string" then .
-  elif type == "array" then
-    [.[] | if .type == "image" then "[Image]"
-           elif type == "string" then .
-           elif .type == "text" then .text
-           else empty end] | join("\n")
-  else "" end // ""'
-
 # Test: string content (text-only message)
-RESULT=$(jq -rs "$JQ_HUMAN" "$FIXTURES_DIR/human_string_content.jsonl")
-assert_eq "Second message with text only" "$RESULT" "LAST_HUMAN_TEXT: string content"
+RESULT=$(parse_human_text "$FIXTURES_DIR/human_string_content.jsonl")
+assert_eq "Second message with text only" "$RESULT" "parse_human_text: string content"
 
 # Test: array content (message with image) - should show [Image] and text
-RESULT=$(jq -rs "$JQ_HUMAN" "$FIXTURES_DIR/human_array_with_image.jsonl")
+RESULT=$(parse_human_text "$FIXTURES_DIR/human_array_with_image.jsonl")
 EXPECTED="Message with image
 [Image]"
-assert_eq "$EXPECTED" "$RESULT" "LAST_HUMAN_TEXT: array content with image shows [Image]"
+assert_eq "$EXPECTED" "$RESULT" "parse_human_text: array content with image shows [Image]"
 
 # Test: array with multiple text blocks
-RESULT=$(jq -rs "$JQ_HUMAN" "$FIXTURES_DIR/human_multi_text.jsonl")
+RESULT=$(parse_human_text "$FIXTURES_DIR/human_multi_text.jsonl")
 EXPECTED="First part
 Second part"
-assert_eq "$EXPECTED" "$RESULT" "LAST_HUMAN_TEXT: array with multiple text blocks"
+assert_eq "$EXPECTED" "$RESULT" "parse_human_text: array with multiple text blocks"
 
 # Test: skip tool_result-only messages (should get previous text message)
-RESULT=$(jq -rs "$JQ_HUMAN" "$FIXTURES_DIR/human_skip_tool_result.jsonl")
-assert_eq "Real user request" "$RESULT" "LAST_HUMAN_TEXT: skip tool_result-only messages"
+RESULT=$(parse_human_text "$FIXTURES_DIR/human_skip_tool_result.jsonl")
+assert_eq "Real user request" "$RESULT" "parse_human_text: skip tool_result-only messages"
 
 # Test: skip isMeta messages (should get previous real user message)
-RESULT=$(jq -rs "$JQ_HUMAN" "$FIXTURES_DIR/human_skip_ismeta.jsonl")
+RESULT=$(parse_human_text "$FIXTURES_DIR/human_skip_ismeta.jsonl")
 EXPECTED="Real request with image
 [Image]"
-assert_eq "$EXPECTED" "$RESULT" "LAST_HUMAN_TEXT: skip isMeta messages"
+assert_eq "$EXPECTED" "$RESULT" "parse_human_text: skip isMeta messages"
 
 
-# === TEST: LAST_ASSISTANT_TEXT extraction ===
+# === TEST: parse_assistant_text ===
 echo ""
-echo "=== Testing LAST_ASSISTANT_TEXT extraction ==="
-
-# Helper: the jq query for assistant text (current turn only, skip isMeta)
-JQ_ASSISTANT='. as $all | ([to_entries[] | select(.value.type == "user" and .value.isMeta != true) | select(.value.message.content | (type == "string") or (type == "array" and any(type == "string" or .type == "text" or .type == "image"))) | .key] | last // -1) as $last_user_idx | $all | [to_entries[] | select(.key > $last_user_idx and .value.type == "assistant") | .value.message.content | if type == "array" then [.[] | select(.type == "text") | .text] else [. // ""] end] | flatten | map(select(. != "")) | join("\n\n")'
+echo "=== Testing parse_assistant_text ==="
 
 # Test: single assistant message
-RESULT=$(jq -rs "$JQ_ASSISTANT" "$FIXTURES_DIR/assistant_single.jsonl")
-assert_eq "Single response" "$RESULT" "LAST_ASSISTANT_TEXT: single message"
+RESULT=$(parse_assistant_text "$FIXTURES_DIR/assistant_single.jsonl")
+assert_eq "Single response" "$RESULT" "parse_assistant_text: single message"
 
 # Test: multiple assistant messages (tool calls interleaved, same turn)
-RESULT=$(jq -rs "$JQ_ASSISTANT" "$FIXTURES_DIR/assistant_multi_interleaved.jsonl")
+RESULT=$(parse_assistant_text "$FIXTURES_DIR/assistant_multi_interleaved.jsonl")
 EXPECTED="First response
 
 Second response after tool"
-assert_eq "$EXPECTED" "$RESULT" "LAST_ASSISTANT_TEXT: multiple messages combined (same turn)"
+assert_eq "$EXPECTED" "$RESULT" "parse_assistant_text: multiple messages combined (same turn)"
 
 # Test: only current turn responses (not previous turns)
-RESULT=$(jq -rs "$JQ_ASSISTANT" "$FIXTURES_DIR/assistant_current_turn_only.jsonl")
-assert_eq "Current turn response" "$RESULT" "LAST_ASSISTANT_TEXT: only current turn (not previous)"
+RESULT=$(parse_assistant_text "$FIXTURES_DIR/assistant_current_turn_only.jsonl")
+assert_eq "Current turn response" "$RESULT" "parse_assistant_text: only current turn (not previous)"
 
 # Test: assistant message with no text (only tool calls)
-RESULT=$(jq -rs "$JQ_ASSISTANT" "$FIXTURES_DIR/assistant_tool_only.jsonl")
-assert_eq "Has text" "$RESULT" "LAST_ASSISTANT_TEXT: filters out tool-only messages"
+RESULT=$(parse_assistant_text "$FIXTURES_DIR/assistant_tool_only.jsonl")
+assert_eq "Has text" "$RESULT" "parse_assistant_text: filters out tool-only messages"
+
+
+# === TEST: parse_ask_question ===
+echo ""
+echo "=== Testing parse_ask_question ==="
+
+# Test: AskUserQuestion with options
+RESULT=$(parse_ask_question "$FIXTURES_DIR/ask_user_question.jsonl")
+assert_not_empty "$RESULT" "parse_ask_question: returns non-empty for AskUserQuestion"
+assert_contains "Test type" "$RESULT" "parse_ask_question: contains header"
+assert_contains "Wait for notification" "$RESULT" "parse_ask_question: contains first option"
+assert_contains "Cancel immediately" "$RESULT" "parse_ask_question: contains second option"
+
+# Test: no AskUserQuestion
+RESULT=$(parse_ask_question "$FIXTURES_DIR/assistant_single.jsonl")
+assert_eq "" "$RESULT" "parse_ask_question: empty when no AskUserQuestion"
 
 
 # === TEST: parse_todos ===
@@ -199,6 +229,24 @@ assert_eq 'col1\tcol2' "$RESULT" "escape_json: tabs"
 # Test: backslashes
 RESULT=$(escape_json 'path\to\file')
 assert_eq 'path\\to\\file' "$RESULT" "escape_json: backslashes"
+
+
+# === TEST: parse-transcript.sh integration ===
+echo ""
+echo "=== Testing parse-transcript.sh integration ==="
+
+# Test: full parsing output
+PARSE_OUTPUT=$("$SCRIPT_DIR/parse-transcript.sh" "$FIXTURES_DIR/ask_user_question.jsonl")
+assert_contains "PARSED_HUMAN_TEXT=" "$PARSE_OUTPUT" "parse-transcript.sh: outputs PARSED_HUMAN_TEXT"
+assert_contains "PARSED_ASSISTANT_TEXT=" "$PARSE_OUTPUT" "parse-transcript.sh: outputs PARSED_ASSISTANT_TEXT"
+assert_contains "PARSED_ASK_QUESTION=" "$PARSE_OUTPUT" "parse-transcript.sh: outputs PARSED_ASK_QUESTION"
+assert_contains "PARSED_TODO_STATUS=" "$PARSE_OUTPUT" "parse-transcript.sh: outputs PARSED_TODO_STATUS"
+
+# Test: eval-able output
+eval "$PARSE_OUTPUT"
+assert_eq "Test idle_prompt hook" "$PARSED_HUMAN_TEXT" "parse-transcript.sh: PARSED_HUMAN_TEXT is correct"
+assert_contains "Let me trigger a test" "$PARSED_ASSISTANT_TEXT" "parse-transcript.sh: PARSED_ASSISTANT_TEXT is correct"
+assert_contains "Test type" "$PARSED_ASK_QUESTION" "parse-transcript.sh: PARSED_ASK_QUESTION contains header"
 
 
 # === SUMMARY ===

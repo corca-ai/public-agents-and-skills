@@ -1,14 +1,14 @@
 #!/bin/bash
 # Claude Code notification script
 # Sends notification only after 60 seconds of inactivity (idle_prompt)
-# Includes task context: user request, Claude response, and todo status
+# Includes task context: user request, Claude response, questions, and todo status
 #
 # === COMPATIBILITY WARNING ===
-# This script parses Claude Code's internal transcript format using jq.
+# This script relies on parse-transcript.sh to parse Claude Code's internal transcript format.
 # The transcript structure is not a public API and may change between versions.
 # If notifications stop working after a Claude Code update, the jq queries may need adjustment.
 #
-# Last tested with: Claude Code v2.1.1 (2025-01-09)
+# Last tested with: Claude Code v2.1.11 (2025-01-18)
 
 # Usage: Add this file to ~/.claude/hooks, and add the following to your .claude/settings.json
 # {
@@ -48,78 +48,6 @@ truncate_text() {
     fi
 }
 
-# Extract text content from message (handles both string and array content)
-extract_content() {
-    local json="$1"
-    local msg_type="$2"
-
-    # Human messages have content directly, assistant messages have .message.content
-    if [ "$msg_type" = "human" ]; then
-        echo "$json" | jq -r '
-            if .message.content | type == "string" then
-                .message.content
-            elif .message.content | type == "array" then
-                [.message.content[] | select(type == "string" or .type == "text") | if type == "string" then . else .text end] | join("\n")
-            else
-                ""
-            end
-        '
-    else
-        echo "$json" | jq -r '
-            if .message.content | type == "string" then
-                .message.content
-            elif .message.content | type == "array" then
-                [.message.content[] | select(.type == "text") | .text] | join("\n")
-            else
-                ""
-            end
-        '
-    fi
-}
-
-# Parse todo status from transcript
-parse_todos() {
-    local transcript="$1"
-
-    # Find the last TodoWrite tool result
-    local todo_json=$(jq -s '
-        [.[] | select(.type == "assistant") |
-         .message.content[]? |
-         select(.type == "tool_use" and .name == "TodoWrite") |
-         .input.todos] |
-        last // []
-    ' "$transcript" 2>/dev/null)
-
-    if [ -z "$todo_json" ] || [ "$todo_json" = "null" ] || [ "$todo_json" = "[]" ]; then
-        echo ""
-        return
-    fi
-
-    local completed=$(echo "$todo_json" | jq '[.[] | select(.status == "completed")] | length')
-    local in_progress=$(echo "$todo_json" | jq '[.[] | select(.status == "in_progress")] | length')
-    local pending=$(echo "$todo_json" | jq '[.[] | select(.status == "pending")] | length')
-    local total=$((completed + in_progress + pending))
-
-    if [ "$total" -gt 0 ]; then
-        echo ":white_check_mark: Todo: $completed/$total done"
-        # Show in_progress items
-        local in_progress_items=$(echo "$todo_json" | jq -r '.[] | select(.status == "in_progress") | "  :arrow_forward: " + .content')
-        if [ -n "$in_progress_items" ]; then
-            echo "$in_progress_items"
-        fi
-        # Show pending items
-        local pending_items=$(echo "$todo_json" | jq -r '.[] | select(.status == "pending") | "  :white_circle: " + .content')
-        if [ -n "$pending_items" ]; then
-            echo "$pending_items"
-        fi
-        # Show completed items
-        local completed_items=$(echo "$todo_json" | jq -r '.[] | select(.status == "completed") | "  :white_check_mark: " + .content')
-        if [ -n "$completed_items" ]; then
-            echo "$completed_items"
-        fi
-    fi
-}
-
 # Escape special characters for JSON
 escape_json() {
     local text="$1"
@@ -133,6 +61,8 @@ escape_json() {
 # === MAIN LOGIC ===
 # Only run when executed directly (not when sourced)
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
     # === CONFIGURATION ===
     # Load webhook URLs from ~/.claude/.env if it exists
     ENV_FILE="$HOME/.claude/.env"
@@ -156,15 +86,22 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     TITLE="Claude Code @ $HOSTNAME"
 
     if [ -n "$TRANSCRIPT_PATH" ] && [ -f "$TRANSCRIPT_PATH" ]; then
-        # Get last user message with actual text (skip tool_result-only and isMeta messages)
-        # Also replace image objects with [Image] placeholder
-        LAST_HUMAN_TEXT=$(jq -rs '[.[] | select(.type == "user" and (.isMeta | not)) | select((.message.content | type == "string") or (.message.content | type == "array" and any(.[]; type == "string" or .type == "text" or .type == "image")))] | last | .message.content | if type == "string" then . elif type == "array" then [.[] | if .type == "image" then "[Image]" elif type == "string" then . elif .type == "text" then .text else empty end] | join("\n") else "" end // ""' "$TRANSCRIPT_PATH" 2>/dev/null)
+        # Use parse-transcript.sh to get parsed data
+        PARSE_SCRIPT="$SCRIPT_DIR/parse-transcript.sh"
 
-        # Get assistant messages after the last user message (current turn only, skip isMeta)
-        LAST_ASSISTANT_TEXT=$(jq -rs '. as $all | ([to_entries[] | select(.value.type == "user" and (.value.isMeta | not)) | select(.value.message.content | (type == "string") or (type == "array" and any(type == "string" or .type == "text" or .type == "image"))) | .key] | last // -1) as $last_user_idx | $all | [to_entries[] | select(.key > $last_user_idx and .value.type == "assistant") | .value.message.content | if type == "array" then [.[] | select(.type == "text") | .text] else [. // ""] end] | flatten | map(select(. != "")) | join("\n\n")' "$TRANSCRIPT_PATH" 2>/dev/null)
-
-        # Get todo status
-        TODO_STATUS=$(parse_todos "$TRANSCRIPT_PATH")
+        if [ -x "$PARSE_SCRIPT" ]; then
+            eval "$("$PARSE_SCRIPT" "$TRANSCRIPT_PATH")"
+            LAST_HUMAN_TEXT="$PARSED_HUMAN_TEXT"
+            LAST_ASSISTANT_TEXT="$PARSED_ASSISTANT_TEXT"
+            ASK_QUESTION="$PARSED_ASK_QUESTION"
+            TODO_STATUS="$PARSED_TODO_STATUS"
+        else
+            # Fallback: minimal parsing if parse-transcript.sh is not available
+            LAST_HUMAN_TEXT=""
+            LAST_ASSISTANT_TEXT=""
+            ASK_QUESTION=""
+            TODO_STATUS=""
+        fi
 
         # Build message
         MESSAGE="━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"$'\n'
@@ -177,6 +114,11 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
         if [ -n "$LAST_ASSISTANT_TEXT" ]; then
             TRUNCATED_RESPONSE=$(truncate_text "$LAST_ASSISTANT_TEXT")
             MESSAGE+=$'\n'":robot_face: Response:"$'\n'"$TRUNCATED_RESPONSE"$'\n'
+        fi
+
+        if [ -n "$ASK_QUESTION" ]; then
+            TRUNCATED_QUESTION=$(truncate_text "$ASK_QUESTION")
+            MESSAGE+=$'\n'":question: Waiting for answer:"$'\n'"$TRUNCATED_QUESTION"$'\n'
         fi
 
         if [ -n "$TODO_STATUS" ]; then
