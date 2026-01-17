@@ -35,5 +35,5 @@ Download public Google documents to `./g-exports/`.
 
 - Only public documents work
 - Uses original document title as filename
-- Sheets csv/tsv: first sheet only; use `&gid={sheetId}` in URL for others
+- Sheets csv/tsv: exports first sheet by default; gid parameter in URL (e.g., `?gid=123`) is auto-detected for specific sheets
 - md exports: base64 images removed; use `docx` or `pdf` for image-heavy documents

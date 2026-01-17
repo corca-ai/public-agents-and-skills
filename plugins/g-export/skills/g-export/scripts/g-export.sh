@@ -18,6 +18,12 @@ else
     exit 1
 fi
 
+# Extract gid from URL (for spreadsheets - specifies which sheet to export)
+GID=""
+if [[ "$URL" =~ [?#\&]gid=([0-9]+) ]]; then
+    GID="${BASH_REMATCH[1]}"
+fi
+
 # Set default format based on document type
 if [[ -z "$FORMAT" ]]; then
     case "$TYPE" in
@@ -32,6 +38,11 @@ mkdir -p "$OUTPUT_DIR"
 
 # Build export URL
 EXPORT_URL="https://docs.google.com/${TYPE}/d/${ID}/export?format=${FORMAT}"
+
+# Add gid parameter for spreadsheets (to export specific sheet)
+if [[ -n "$GID" && "$TYPE" == "spreadsheets" ]]; then
+    EXPORT_URL="${EXPORT_URL}&gid=${GID}"
+fi
 
 # Get filename from Content-Disposition header
 echo "Downloading ${TYPE} as ${FORMAT}..."
