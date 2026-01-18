@@ -38,7 +38,7 @@ claude plugin update <plugin-name>@corca-plugins   # 기존 플러그인 업데�
 | [g-export](#g-export) | Skill | Google 문서를 로컬 파일로 다운로드 |
 | [slack-to-md](#slack-to-md) | Skill | Slack 메시지를 마크다운으로 변환 |
 | [suggest-tidyings](#suggest-tidyings) | Skill | 안전한 리팩토링 기회 제안 |
-| [attention-hook](#attention-hook) | Hook | 대기 상태일 때 Slack/Discord 알림 |
+| [attention-hook](#attention-hook) | Hook | 대기 상태일 때 Slack 알림 |
 
 ## Skills
 
@@ -169,7 +169,7 @@ Kent Beck의 "Tidy First?" 철학에 기반하여 최근 커밋들을 분석하�
 /plugin install attention-hook@corca-plugins
 ```
 
-Claude Code가 사용자의 입력을 기다릴 때 Slack 또는 Discord로 푸시 알림을 보내는 훅입니다. 알림에는 작업 컨텍스트(사용자 요청, Claude 응답, 질문 내용, Todo 상태)가 포함되어 어떤 작업인지 즉시 파악할 수 있습니다. 원격 서버에 세팅해뒀을 때 특히 유용합니다.
+Claude Code가 사용자의 입력을 기다릴 때 Slack으로 푸시 알림을 보내는 훅입니다. 알림에는 작업 컨텍스트(사용자 요청, Claude 응답, 질문 내용, Todo 상태)가 포함되어 어떤 작업인지 즉시 파악할 수 있습니다. 원격 서버에 세팅해뒀을 때 특히 유용합니다.
 
 **알림 트리거 조건**:
 - `idle_prompt`: 사용자 입력을 60초 이상 기다릴 때 (Claude Code 내부 구현, 변경 불가)
@@ -186,7 +186,6 @@ Claude Code가 사용자의 입력을 기다릴 때 Slack 또는 Discord로 푸�
 ```bash
 # ~/.claude/.env
 SLACK_WEBHOOK_URL="" # Slack 사용 시 설정
-DISCORD_WEBHOOK_URL=""  # Discord 사용 시 설정
 CLAUDE_ATTENTION_DELAY=30  # AskUserQuestion 알림 지연 시간 (초, 기본값: 30)
 ```
 

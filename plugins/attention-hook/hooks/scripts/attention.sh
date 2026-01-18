@@ -75,7 +75,6 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
 
     # Use environment variables (can be set in ~/.claude/.env or shell environment)
     SLACK_WEBHOOK="${SLACK_WEBHOOK_URL:-}"
-    DISCORD_WEBHOOK="${DISCORD_WEBHOOK_URL:-}"
 
     # === READ HOOK INPUT ===
     INPUT=$(cat)
@@ -137,14 +136,6 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
         curl -s -X POST "$SLACK_WEBHOOK" \
             -H "Content-Type: application/json" \
             -d "{\"text\": \"*$ESCAPED_TITLE*\\n$ESCAPED_MESSAGE\"}" \
-            > /dev/null 2>&1
-    fi
-
-    # Send to Discord
-    if [ -n "$DISCORD_WEBHOOK" ]; then
-        curl -s -X POST "$DISCORD_WEBHOOK" \
-            -H "Content-Type: application/json" \
-            -d "{\"content\": \"**$ESCAPED_TITLE**\\n$ESCAPED_MESSAGE\"}" \
             > /dev/null 2>&1
     fi
 

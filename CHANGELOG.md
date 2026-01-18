@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Plugin structure with `.claude-plugin/plugin.json` manifest
 - Skills: `clarify`, `slack-to-md`
-- Hooks: `attention.sh` for Slack/Discord notifications on idle
+- Hooks: `attention.sh` for Slack notifications on idle
 - `hooks/hooks.json` for plugin-based hook configuration
 - MIT License
 

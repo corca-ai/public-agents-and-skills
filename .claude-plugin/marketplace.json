@@ -30,8 +30,8 @@
     {
       "name": "attention-hook",
       "source": "./plugins/attention-hook",
-      "description": "A hook that sends Slack/Discord notifications when Claude Code is waiting",
-      "keywords": ["notification", "slack", "discord", "hook"]
+      "description": "A hook that sends Slack notifications when Claude Code is waiting",
+      "keywords": ["notification", "slack", "hook"]
     },
     {
       "name": "g-export",
