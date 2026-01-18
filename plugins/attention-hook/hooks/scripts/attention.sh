@@ -10,23 +10,6 @@
 #
 # Last tested with: Claude Code v2.1.11 (2025-01-18)
 
-# Usage: Add this file to ~/.claude/hooks, and add the following to your .claude/settings.json
-# {
-#   "hooks": {
-#     "Notification": [
-#       {
-#         "matcher": "idle_prompt",
-#         "hooks": [
-#           {
-#             "type": "command",
-#             "command": "~/.claude/hooks/attention.sh"
-#           }
-#         ]
-#       }
-#     ]
-#   }
-# }
-
 # === HELPER FUNCTIONS ===
 # These functions are always defined, allowing this script to be sourced for testing.
 

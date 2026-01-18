@@ -163,7 +163,7 @@ Kent Beck의 "Tidy First?" 철학에 기반하여 최근 커밋들을 분석하�
 
 ## Hooks
 
-### [attention-hook](plugins/attention-hook/hooks/scripts/attention.sh)
+### [attention-hook](plugins/attention-hook/hooks/hooks.json)
 
 ```bash
 /plugin install attention-hook@corca-plugins
