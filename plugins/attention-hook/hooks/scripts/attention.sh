@@ -110,6 +110,22 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
         MESSAGE="Claude is waiting for your input"
     fi
 
+    # === DEDUPLICATION ===
+    # Skip sending if message is identical to the last one
+    CACHE_FILE="/tmp/claude-attention-last-hash"
+    MESSAGE_HASH=$(echo "$MESSAGE" | shasum -a 256 | cut -d' ' -f1)
+
+    if [ -f "$CACHE_FILE" ]; then
+        LAST_HASH=$(cat "$CACHE_FILE" 2>/dev/null)
+        if [ "$MESSAGE_HASH" = "$LAST_HASH" ]; then
+            # Same message as before, skip notification
+            exit 0
+        fi
+    fi
+
+    # Save current hash for next comparison
+    echo "$MESSAGE_HASH" > "$CACHE_FILE"
+
     # === SEND NOTIFICATIONS ===
     ESCAPED_TITLE=$(escape_json "$TITLE")
     ESCAPED_MESSAGE=$(escape_json "$MESSAGE")
