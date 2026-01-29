@@ -15,6 +15,13 @@ Do NOT consider the task complete without updating related docs.
 ## Plan Mode
 
 When entering plan mode, follow the [Plan & Lessons Protocol](docs/plan-and-lessons.md).
+This is separate from the system plan file — create `prompt-logs/` directory with plan.md and lessons.md regardless of where the system stores its plan.
+
+## Collaboration Style
+
+- The user communicates in Korean. Respond in Korean for conversation, English for code and docs (per Language rules below).
+- The user expects protocols in CLAUDE.md to be followed without explicit reminders.
+- Prefer short, precise feedback loops — ask for intent confirmation before large implementations.
 
 ## Language
 

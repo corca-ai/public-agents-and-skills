@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "A collection of Claude Code plugins for AI-Native Product Teams",
-    "version": "1.4.0"
+    "version": "1.5.0"
   },
   "plugins": [
     {
@@ -50,6 +50,12 @@
       "source": "./plugins/notion-to-md",
       "description": "A skill that converts public Notion pages to local Markdown files",
       "keywords": ["notion", "markdown", "export", "documentation"]
+    },
+    {
+      "name": "retro",
+      "source": "./plugins/retro",
+      "description": "A skill that performs comprehensive session retrospectives",
+      "keywords": ["retrospective", "session-review", "learning", "improvement"]
     }
   ]
 }

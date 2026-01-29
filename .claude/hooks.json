@@ -1,0 +1,13 @@
+{
+  "PostToolUse": [
+    {
+      "matcher": "EnterPlanMode",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "echo 'Follow the Plan & Lessons Protocol (docs/plan-and-lessons.md)'"
+        }
+      ]
+    }
+  ]
+}

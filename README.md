@@ -39,6 +39,7 @@ claude plugin update <plugin-name>@corca-plugins   # 기존 플러그인 업데�
 | [slack-to-md](#slack-to-md) | Skill | Slack 메시지를 마크다운으로 변환 |
 | [notion-to-md](#notion-to-md) | Skill | 공개 Notion 페이지를 마크다운으로 변환 |
 | [suggest-tidyings](#suggest-tidyings) | Skill | 안전한 리팩토링 기회 제안 |
+| [retro](#retro) | Skill | 세션 종료 시 포괄적 회고 수행 |
 | [attention-hook](#attention-hook) | Hook | 대기 상태일 때 Slack 알림 |
 
 ## Skills
@@ -239,6 +240,36 @@ Kent Beck의 "Tidy First?" 철학에 기반하여 최근 커밋들을 분석하�
 - 로직 변경 없이 가독성만 개선하는 안전한 변경
 - 한 커밋으로 분리 가능한 원자적 수정
 - 누구나 쉽게 리뷰할 수 있는 간단한 diff
+
+### [retro](plugins/retro/skills/retro/SKILL.md)
+
+**설치**:
+```bash
+claude plugin marketplace add https://github.com/corca-ai/claude-plugins.git
+claude plugin install retro@corca-plugins
+```
+
+**갱신**:
+```bash
+claude plugin marketplace update corca-plugins
+claude plugin update retro@corca-plugins
+```
+
+세션 종료 시점에 포괄적인 회고를 수행하는 스킬입니다. [Plan & Lessons Protocol](docs/plan-and-lessons.md)의 `lessons.md`가 세션 중 점진적으로 쌓이는 학습 기록이라면, `retro`는 세션 전체를 조감하는 종합 회고입니다.
+
+**사용법**:
+- 세션 종료 시: `/retro`
+- 특정 디렉토리 지정: `/retro prompt-logs/260130-my-session`
+
+**주요 기능**:
+- 유저/조직/프로젝트에 대한 정보 중 이후 작업에 도움될 내용 문서화
+- 업무 스타일·협업 방식 관찰 후 CLAUDE.md 업데이트 제안 (유저 승인 후 적용)
+- 프롬프팅 습관 개선점 제안 (세션의 구체적 사례와 함께)
+- 유저의 지식/경험 수준에 맞춘 학습자료 링크 제공
+- find-skills로 워크플로우에 도움될 스킬 탐색 또는 skill-creator로 새 스킬 제작 계획
+
+**출력물**:
+- `prompt-logs/{YYMMDD}-{title}/retro.md` — plan.md, lessons.md와 같은 디렉토리에 저장
 
 ## Hooks
 
