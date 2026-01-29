@@ -1,29 +1,35 @@
 # Lessons: Plan & Lessons Protocol
 
-## Ping-pong Learnings
+## 핑퐁에서 배운 것
 
-### Claude should infer paths, not require explicit specification
+### 경로는 Claude가 알아서 판단해야 한다
 
-- **Expected**: User specifies output paths; Claude documents "default" vs "exception" rules
-- **Actual**: User expects Claude to determine paths from context. Separate "override" rules are redundant — if the user mentions a path, Claude naturally uses it
-- **Takeaway**: Don't create branching rules for what a single principle covers
+- **예상**: 유저가 경로를 지정하고, Claude는 "기본값" vs "예외" 규칙을 문서화
+- **실제**: 유저는 Claude가 맥락에서 경로를 판단하길 기대함. "유저가 경로를 명시하면 그걸 따른다"는 별도 규칙이 아니라, 기본 동작에 이미 포함된 것
+- **시사점**: 하나의 원칙이 이미 커버하는 것을 분기 규칙으로 만들지 말 것
 
-When stating a default behavior → check if the "exception" case is already handled by the default
+기본 동작을 정의할 때 → "예외" 케이스가 이미 기본 동작에 포함되는지 확인
 
-### Progressive disclosure doesn't need to be documented as a rule
+### Progressive disclosure는 규칙으로 명시할 필요가 없다
 
-- **Expected**: Add a note about progressive disclosure in CLAUDE.md
-- **Actual**: The existing CLAUDE.md already follows the pattern (lean top-level, details in docs/). New content naturally follows the same structure without being told
-- **Takeaway**: If a codebase already embodies a principle structurally, documenting the principle as a rule is unnecessary
+- **예상**: CLAUDE.md에 progressive disclosure 원칙을 문서화
+- **실제**: 기존 CLAUDE.md가 이미 그 패턴을 따르고 있음 (최상위는 간결하게, 상세 내용은 docs/에). 새 콘텐츠도 자연히 같은 구조를 따름
+- **시사점**: 코드베이스가 이미 구조적으로 원칙을 체현하고 있다면, 그 원칙을 규칙으로 명시하는 건 불필요
 
-### Lessons vs retrospective are different concerns
+### Lessons와 회고(retrospective)는 다른 관심사다
 
-- **Expected**: User's retrospective prompt could be integrated into lessons.md
-- **Actual**: Lessons are incremental (accumulated during session). Retrospectives are comprehensive (end-of-session reflection covering prompting habits, learning resources, skill discovery). Coupling them muddies both
-- **Takeaway**: When two things share a theme but differ in timing and scope, keep them separate
+- **예상**: 유저의 회고 프롬프트를 lessons.md에 통합할 수 있을 것
+- **실제**: Lessons는 세션 중 점진적으로 쌓이는 것. 회고는 세션 종료 시점의 포괄적 반성 (프롬프팅 습관, 학습자료, 스킬 탐색 등). 결합하면 둘 다 흐려짐
+- **시사점**: 주제가 비슷해도 시점과 범위가 다르면 분리할 것
 
-### CLAUDE.md instructs Claude, not the user
+### CLAUDE.md는 Claude를 위한 것이지, 유저를 위한 것이 아니다
 
-- **Expected**: Add reminders for user to run `/retro` and `/export` at session end
-- **Actual**: User felt this was "slightly awkward" — CLAUDE.md defines Claude's behavior, not user checklists. User habits don't belong there
-- **Takeaway**: Keep CLAUDE.md's audience clear: it's for Claude, not for the user
+- **예상**: 세션 종료 시 `/retro`, `/export` 실행을 유저에게 권하는 내용을 CLAUDE.md에 추가
+- **실제**: 유저 스스로 "살짝 애매하다"고 느낌. CLAUDE.md는 Claude의 동작을 정의하는 곳이지, 유저에게 할 일을 알려주는 곳이 아님
+- **시사점**: CLAUDE.md의 독자를 명확히 할 것 — Claude에게 하는 지시만 담기
+
+### Lessons의 언어는 사용자 언어를 따라야 한다
+
+- **예상**: 프로토콜 문서(docs/)의 Language 규칙(English only)을 따라 영어로 작성
+- **실제**: Lessons는 유저가 읽는 산출물이므로 유저의 언어로 작성해야 자연스러움
+- **시사점**: 문서의 독자가 누구인지에 따라 언어 규칙이 달라져야 한다

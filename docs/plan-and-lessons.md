@@ -63,6 +63,10 @@ When [situation] → [action]
 
 The `When → do` action guideline is optional. Only add one when it fits naturally.
 
+### Language
+
+Write lessons in the user's language.
+
 ### Timing
 
 Accumulate incrementally throughout the session — not just at the end. Record learnings as they emerge from conversation and implementation.

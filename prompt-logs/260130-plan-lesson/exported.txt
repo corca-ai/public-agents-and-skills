@@ -1,0 +1,534 @@
+
+ ▐▛███▜▌   Claude Code v2.1.22
+▝▜█████▛▘  Opus 4.5 · Claude Max
+  ▘▘ ▝▝    ~/codes/corca/claude-plugins
+
+❯ [260130-plan-lesson]                                                      
+                                                                            
+  /Users/ted/codes/works/docs/plan-mode.md 의 철학 중 일부를 이 repo에도    
+  반영하고 싶습니다. 계획 및 임시 산출물은 언제나 문서로 저장하고, 구현하며 
+  + 유저와 핑퐁하며 배운 것들을 같은 디렉토리에 lessons.md 로 기록하게      
+  하는 게 목적입니다. 의도를 이해하셨나요? 참고로 프롬프트 로그는 세션      
+  종료하면서 `/export` 를 제가 직접 할 예정입니다.                          
+
+⏺ 먼저 참조 파일을 읽겠습니다.
+
+⏺ Read 2 files (ctrl+o to expand)
+
+⏺ 네, 의도를 이해했습니다. 정리하면:
+
+  핵심 목적: plan-mode.md의 "Plan → Execute → Reflect" 사이클 중 일부를 이
+  repo의 CLAUDE.md에 반영
+
+  반영할 것:
+  1. 계획/임시 산출물을 항상 문서로 저장 — plan mode 진입 시
+  projects/{YYMMDD}-{title}/plan.md 같은 형태로 계획을 파일에 기록
+  2. 구현 중 배운 것을 lessons.md에 기록 — 같은 디렉토리에 lessons.md를 두고,
+  구현하면서 + 유저와 핑퐁하면서 발견한 gap, 예상 vs 실제, takeaway 등을 누적
+
+  반영하지 않을 것:
+  - 프롬프트 로그 자동 저장 — 유저가 세션 종료 시 /export로 직접 처리
+
+  한 가지 확인: plan-mode.md의 Deferred Actions(plan mode 중 처리 못 한 요청을
+  plan 문서에 기록하는 것)도 함께 반영할 건지, 아니면 plan 저장 + lessons 기록
+  두 가지만 반영하면 될까요?
+
+❯ plan에는 언제나 성공 기준(BDD 스타일 인수 테스트)이 있어야 한다 +         
+  deferred actions도 반영해주세요. 그런데 문서로 저장하는 경로는 제가       
+  처음에 []에 넣었던 그 경로입니다. prompt-logs/ 에 디렉토리를              
+  만들어뒀습니다. (앞으로도 항상 []로 표기하겠다는 건 아닙니다) 의도를      
+  아시겠나요?                                                               
+
+⏺ 이해했습니다. [260130-plan-lesson]이 이번 세션의 산출물 경로를 가리키는
+  것이었군요.
+
+  정리하면:
+
+  - 산출물 경로: prompt-logs/260130-plan-lesson/ (유저가 세션별로 지정, 표기
+  방식은 매번 다를 수 있음)
+  - plan.md: 계획 + BDD 스타일 인수 테스트(성공 기준) + Deferred Actions
+  - lessons.md: 구현 중 배운 것 누적 기록
+
+  디렉토리 상태를 확인하겠습니다.
+
+⏺ Read 1 file (ctrl+o to expand)
+
+⏺ 기존 세션 디렉토리의 구조도 참고하겠습니다.
+
+⏺ Bash(ls -la /Users/ted/codes/corca/claude-plugins/prompt-logs/260114-g-export/
+       && echo "---" && ls -la
+      /Users/ted/codes/corca/claude-plugins/prompt-logs/260130-bring…)
+  ⎿  total 16
+     drwxr-xr-x  4 ted  staff   128 Jan 14 09:42 .
+     drwxr-xr-x  6 ted  staff   192 Jan 30 06:32 ..
+     … +9 lines (ctrl+o to expand)
+  ⎿  Interrupted · What should Claude do instead?
+
+❯ 아닙니다. 유저가 세션별로 지정할 수도 있지만, 기본적으로는 유저의 요청에  
+  맞춰 당신이 알아서 해주길 바란다는 뜻입니다.                              
+
+⏺ 이해했습니다. 정정합니다:
+
+  - 기본: Claude가 유저의 요청을 보고 prompt-logs/{YYMMDD}-{title}/ 경로를
+  스스로 판단해서 생성
+  - 예외: 유저가 명시적으로 경로를 지정하면 그걸 따름 (이번 세션처럼
+  [260130-plan-lesson])
+
+  이 이해가 맞나요?
+
+❯ 음... '스스로 판단해서 생성'할 테니 예외 이야기는 아예 필요가 없겠네요.   
+  요청 안에 그런 말이 있으면 알아서 할테니까요. 제 생각이 맞을까요?         
+
+⏺ 맞습니다. 별도 규칙으로 분기할 필요 없이, "유저의 요청에 맞춰 적절한 경로를
+  판단한다"는 한 가지 원칙이면 충분합니다. 유저가 경로를 언급하면 자연히 그걸
+  반영하게 되니까요.
+
+  그러면 최종 정리:
+
+  1. plan.md — 계획 문서. BDD 스타일 인수 테스트(성공 기준) + Deferred Actions
+  포함
+  2. lessons.md — 구현 + 유저 핑퐁 중 배운 것 누적
+  3. 경로 — prompt-logs/{YYMMDD}-{title}/에 저장, 경로는 유저 요청에 맞춰 판단
+  4. 프롬프트 로그 — 유저가 /export로 직접 처리
+
+  이 이해가 맞으면 CLAUDE.md에 반영하겠습니다.
+
+❯ 맞습니다. plan + lesson 에 대해서는 docs/ 안에 넣고 CLAUDE.md 는 링크만   
+  거는 게 낫겠다고 생각했는데 지금 CLADUE.md 에 반영한다고 해서, 왜 그렇게  
+  생각했는지 당신의 의견이 궁금합니다. (또는 CLAUDe.md 에 반영하는 과정에서 
+  스스로 progressive disclosure 원칙을 따랐을지)                            
+
+⏺ 솔직히 말하면, "반영하겠습니다"라고 할 때 구조까지 깊이 생각하지 않았습니다.
+  기존 CLAUDE.md의 패턴을 보면:
+
+  1. Read `README.md`
+  2. For plugin work, also read:
+     - [Modifying/Testing/Deploying Plugins](docs/modifying-plugin.md)
+     - [Adding New Plugins](docs/adding-plugin.md)
+     - [Skills Guide](docs/skills-guide.md)
+
+  이미 progressive disclosure를 따르고 있습니다. 상세 내용은 docs/에 두고
+  CLAUDE.md는 링크만 걸고 있죠. Plan + lessons 프로토콜도 같은 패턴으로 가는 게
+  일관성 있습니다.
+
+  스스로 그 판단을 했을 가능성은 — 실제로 작성 단계에 들어가면 분량을 보고
+  분리했을 수도 있지만, 의식적으로 기존 구조와의 일관성을 먼저 점검한 건
+  아니었습니다.
+
+❯ 알겠습니다. 그러면 기존 CLAUDE.md 에 progressive disclosure 이야기를 할   
+  필요는 있을지 궁금합니다. (저는 당신이 충분히 알아서 할 거라고 생각하긴   
+  합니다만)                                                                 
+
+⏺ 동의합니다. Progressive disclosure는 "문서를 어떻게 구성하라"는 메타 원칙이지,
+   Claude가 매번 참조해야 할 작업 지침이 아닙니다. CLAUDE.md가 이미 그 패턴으로
+  작성되어 있으면, 새 항목을 추가할 때도 자연히 같은 패턴을 따르게 됩니다.
+
+  명시할 필요 없다고 봅니다. 그러면 구현으로 넘어가겠습니다.
+
+⏺ Read 2 files (ctrl+o to expand)
+
+⏺ Entered plan mode
+  Claude is now exploring and designing an implementation approach.
+
+⏺ 기존 문서 스타일을 참고하겠습니다.
+
+⏺ Read 2 files (ctrl+o to expand)
+  ⎿  Interrupted · What should Claude do instead?
+
+❯ 잘 하시겠지만, 이번 구현도 개밥먹기입니다. 아시죠? 그리고 끝나고 커밋도   
+  해주세요.                                                                 
+
+⏺ 네, 이번 작업 자체가 plan + lessons 프로토콜의 첫 적용 대상이라는 뜻이죠.
+  prompt-logs/260130-plan-lesson/plan.md를 먼저 작성하고, 구현하면서 배운 것을
+  lessons.md에 기록하겠습니다.
+  ⎿  Interrupted · What should Claude do instead?
+
+❯ 구현하면서 뿐이 아닙니다. lessons 에는 최초 제 질의로부터 우리가          
+  핑퐁하면서 서로 더 많이 알게 된 것도 기록해야 합니다. 생각해보니 전에     
+  만든 이 프롬프트가 도움이 되겠네요.                                       
+                                                                            
+  ---                                                                       
+                                                                            
+  이번 세션을 바탕으로 우리가 다음번에는 만족스러운 결과에 더 일찍 도달할   
+  수 있게 돕는 회고 문서를 함께 만들어봅시다. 이런 내용을 생각 중입니다.    
+                                                                            
+  1. 세션에서 드러난, 나와 내 조직과 내 프로젝트에 대한 정보 중 이후 작업에 
+  도움될만한 걸 문서화                                                      
+  2. 그 외 내 업무 스타일과 협업 방식은 CLAUDE md 에 문서화                 
+  3. 내 프롬프팅 습관 중 개선할 만한 부분                                   
+  4. 내 지식/경험 수준을 짐작해볼 때 내게 도움될 만한 학습자료들의 링크.    
+  그리고 이 프로젝트에서 도움될 자료도.                                     
+  5. find-skills로 찾은 내 상황에 도움될 만한 스킬들. 딱 맞는 게 안         
+  보인다면 skill-creator 로 하나 만들기 위한 계획.                          
+                                                                            
+  제 의도를 이해하셨나요? 당신의 의견도 듣고 싶고, 다른 좋은 방법들을       
+  제안해주셔도 좋습니다.                                                    
+                                                                            
+  ---                                                                       
+                                                                            
+  음.. 이 프롬프트는 별도의 스킬로 만드는 게 나을까요? (그리고 lessons      
+  작성시 그 스킬 발동하게?) 어떻게 생각하세요?                              
+
+⏺ 두 가지를 분리해서 생각하는 게 좋다고 봅니다.
+
+  lessons.md는 구현 중 점진적으로 쌓이는 것입니다. 핑퐁에서 배운 것, plan vs
+  실제의 gap, takeaway. 세션이 진행되면서 수시로 업데이트됩니다.
+
+  회고 프롬프트는 세션 종료 시점의 포괄적 반성입니다. CLAUDE.md 업데이트,
+  프롬프팅 습관 피드백, 학습자료 추천, 스킬 탐색까지 — lessons보다 범위가 넓고,
+  성격도 다릅니다.
+
+  이걸 lessons 작성에 자동 연결하면 두 관심사가 섞입니다. 별도 스킬(예:
+  /retro)로 만들어서 유저가 세션 마무리 시 명시적으로 호출하는 게 낫다고
+  생각합니다. /export 직전에 /retro 한 번 치는 흐름이요.
+
+  다만 이건 이번 태스크의 범위 밖입니다. 지금은 plan + lessons 프로토콜을 먼저
+  구현하고, /retro 스킬은 별도 세션에서 다루는 게 어떨까요?
+
+❯ 일리가 있습니다. 별도로 갑시다. 근데 `/retro` 와(아직 안 만들었지만)      
+  `/export` 를 권장하는 말을 해주는 걸 CLAUDe.md 에 넣는 건 어떻게          
+  생각하세요? (살짝 애매하게 느껴지긴 합니다.)                              
+
+⏺ 애매한 감이 맞다고 봅니다. CLAUDE.md는 "Claude가 이 코드베이스에서 어떻게
+  동작해야 하는가"를 정의하는 곳인데, "유저에게 이걸 하라고 권하라"는 성격이
+  다릅니다. 그리고 /retro는 아직 존재하지도 않고, /export는 이미 유저의 습관이니
+   굳이 적을 이유가 없습니다.
+
+  나중에 /retro 스킬을 만들면, 그 스킬의 트리거 조건이나 사용법은 SKILL.md에서
+  다루면 됩니다.
+
+  지금은 빼는 게 깔끔하다고 생각합니다. 그러면 plan 작성으로 넘어가겠습니다.
+
+⏺ Updated plan
+  ⎿  /plan to preview
+
+⏺ User approved Claude's plan
+  ⎿  Plan saved to: ~/.claude/plans/zippy-jingling-flame.md · /plan to edit
+     Plan: Add Plan & Lessons Protocol
+
+     Goal
+
+     Add a protocol to CLAUDE.md that ensures every plan-mode session
+     produces persistent artifacts:
+     - plan.md with success criteria (BDD-style acceptance tests) and
+     deferred actions
+     - lessons.md with learnings accumulated throughout the session
+     (ping-pong + implementation)
+
+     Files to Create/Modify
+
+     1. Create docs/plan-and-lessons.md — detailed protocol
+     2. Edit CLAUDE.md — add link to the new doc
+
+     docs/plan-and-lessons.md Content
+
+     Plan Document
+
+     - Location: prompt-logs/{YYMMDD}-{title}/plan.md, path determined by
+     Claude based on user's request
+     - Must include:
+       - Success Criteria: BDD-style acceptance tests (Given/When/Then)
+       - Deferred Actions: requests received during plan mode that can't be
+     handled immediately, tracked as checklist
+     - Timing: created when entering plan mode, before implementation begins
+
+     Lessons Document
+
+     - Location: prompt-logs/{YYMMDD}-{title}/lessons.md, same directory as
+     plan
+     - Records:
+       - Learnings from user ping-pong (clarifications, corrected
+     assumptions, revealed preferences)
+       - Implementation learnings (expected vs actual, gaps, takeaways)
+     - Timing: accumulated incrementally throughout the session, not just at
+      the end
+     - Format: follows the Expected/Actual/Takeaway structure from
+     plan-mode.md, with optional When [situation] → [action] guidelines
+
+     Deferred Actions
+
+     - During plan mode, only plan file can be edited
+     - User requests that can't be handled immediately go into plan.md's
+     Deferred Actions section
+     - Check this section first when starting implementation
+
+     CLAUDE.md Changes
+
+     Add a new bullet under "Before You Start" item 2 (the plugin-specific
+     reads), or as a new top-level section linking to the protocol doc.
+     Keeps CLAUDE.md lean — just a link.
+
+     Acceptance Criteria
+
+     Given a session that enters plan mode
+     When Claude creates a plan
+     Then a plan.md file exists under prompt-logs/{YYMMDD}-{title}/
+     And it contains a "Success Criteria" section with BDD-style acceptance
+     tests
+     And it contains a "Deferred Actions" section
+
+     Given a user request during plan mode that cannot be acted on
+     immediately
+     When Claude records it
+     Then it appears as a checklist item in plan.md's Deferred Actions
+     section
+
+     Given an ongoing session with user interaction
+     When Claude learns something from ping-pong or implementation
+     Then it is recorded in lessons.md in the same directory as plan.md
+     And each entry has at minimum: what was expected, what actually
+     happened, takeaway
+
+     Verification
+
+     - Read the created docs/plan-and-lessons.md and confirm it matches the
+     protocol
+     - Read CLAUDE.md and confirm the link is present and correct
+     - Confirm this session's own prompt-logs/260130-plan-lesson/plan.md and
+      lessons.md are created as dogfooding
+
+
+
+
+
+
+⏺ Write(docs/plan-and-lessons.md)
+  ⎿  Wrote 69 lines to docs/plan-and-lessons.md
+      1 # Plan & Lessons Protocol
+      2 
+      3 Protocol for persisting planning artifacts and session learnings.
+      4 
+      5 ## Plan Document
+      6 
+      7 ### Location
+      8 
+      9 `prompt-logs/{YYMMDD}-{title}/plan.md`
+     … +59 lines (ctrl+o to expand)
+
+⏺ Read 1 file (ctrl+o to expand)
+
+⏺ Update(CLAUDE.md)
+  ⎿  Added 4 lines
+      12  After modifying code, update any affected documentation.
+      13  Do NOT consider the task complete without updating related docs
+          .
+      14  
+      15 +## Plan Mode                                                   
+      16 +                                                               
+      17 +When entering plan mode, follow the [Plan & Lessons Protocol](d
+         +ocs/plan-and-lessons.md).                                      
+      18 +                                                               
+      19  ## Language
+      20  
+      21  Write all documentation in English, except for:
+
+⏺ 이제 이번 세션의 dogfood 산출물을 만들겠습니다.
+
+⏺ Write(prompt-logs/260130-plan-lesson/plan.md)
+  ⎿  Wrote 38 lines to prompt-logs/260130-plan-lesson/plan.md
+      1 # Plan: Add Plan & Lessons Protocol
+      2 
+      3 ## Goal
+      4 
+      5 Add a protocol to CLAUDE.md that ensures every plan-mode session 
+        produces persistent artifacts:
+      6 - `plan.md` with success criteria (BDD-style acceptance tests) an
+        d deferred actions
+      7 - `lessons.md` with learnings accumulated throughout the session
+      8 
+      9 ## Files to Create/Modify
+     … +28 lines (ctrl+o to expand)
+
+⏺ Write(prompt-logs/260130-plan-lesson/lessons.md)
+  ⎿  Wrote 30 lines to prompt-logs/260130-plan-lesson/lessons.md
+      1 # Lessons: Plan & Lessons Protocol
+      2 
+      3 ## Ping-pong Learnings
+      4 
+      5 ### Claude should infer paths, not require explicit specification
+      6 
+      7 - **Expected**: User specifies output paths; Claude documents "de
+        fault" vs "exception" rules
+      8 - **Actual**: User expects Claude to determine paths from context
+        . Separate "override" rules are redundant — if the user mentions 
+        a path, Claude naturally uses it
+      9 - **Takeaway**: Don't create branching rules for what a single pr
+        inciple covers
+     … +20 lines (ctrl+o to expand)
+
+⏺ Bash(git status)
+  ⎿  On branch main
+     Your branch is ahead of 'origin/main' by 2 commits.
+       (use "git push" to publish your local commits)
+     … +12 lines (ctrl+o to expand)
+
+⏺ Bash(git diff)
+  ⎿  diff --git a/CLAUDE.md b/CLAUDE.md
+     index 30fb65b..03cb3e3 100644
+     --- a/CLAUDE.md
+     … +14 lines (ctrl+o to expand)
+
+⏺ Bash(git log --oneline -5)
+  ⎿  78fb3d9 Add notion-to-md
+     0b203ec 구조 변경
+     a2d3400 Update readme
+     … +3 lines (ctrl+o to expand)
+
+⏺ Bash(git add CLAUDE.md docs/plan-and-lessons.md
+      prompt-logs/260130-plan-lesson/plan.md
+      prompt-logs/260130-plan-lesson/lessons.md && git commit -m "Add plan &
+      lessons…)
+  ⎿  [main 4577478] Add plan & lessons protocol for plan-mode sessions
+      4 files changed, 138 insertions(+)
+      create mode 100644 docs/plan-and-lessons.md
+     … +2 lines (ctrl+o to expand)
+
+⏺ Bash(git status)
+  ⎿  On branch main
+     Your branch is ahead of 'origin/main' by 3 commits.
+       (use "git push" to publish your local commits)
+     … +2 lines (ctrl+o to expand)
+
+⏺ 완료했습니다. 요약:
+
+  - docs/plan-and-lessons.md — plan.md(BDD 성공 기준 + Deferred Actions)와
+  lessons.md(핑퐁 + 구현 학습) 프로토콜
+  - CLAUDE.md — Plan Mode 섹션 추가, 프로토콜 문서 링크
+  - prompt-logs/260130-plan-lesson/plan.md — 이 세션의 plan (dogfood)
+  - prompt-logs/260130-plan-lesson/lessons.md — 이 세션에서 배운 4가지 기록
+  (dogfood)
+
+✻ Cooked for 2m 10s
+
+❯ 아, 하나 깜빡했네요. lessons 는 제가 읽을 거라서 한글이면 좋겠습니다.     
+  lessons는 사용자 언어를 따르도록. 가능할까요?                             
+
+⏺ Read 1 file (ctrl+o to expand)
+
+⏺ Update(docs/plan-and-lessons.md)
+  ⎿  Added 4 lines
+      63  
+      64  The `When → do` action guideline is optional. Only add one when
+           it fits naturally.
+      65  
+      66 +### Language                                                   
+      67 +                                                               
+      68 +Write lessons in the user's language.                          
+      69 +                                                               
+      70  ### Timing
+      71  
+      72  Accumulate incrementally throughout the session — not just at t
+          he end. Record learnings as they emerge from conversation and i
+          mplementation.
+
+⏺ 이제 이번 세션의 lessons.md도 한글로 바꾸겠습니다.
+
+⏺ Read 1 file (ctrl+o to expand)
+
+⏺ Write(prompt-logs/260130-plan-lesson/lessons.md)
+  ⎿  Added 24 lines, removed 18 lines
+       1  # Lessons: Plan & Lessons Protocol
+       2  
+       3 -## Ping-pong Learnings                                         
+       3 +## 핑퐁에서 배운 것                                            
+       4  
+       5 -### Claude should infer paths, not require explicit specificati
+         -on                                                             
+       5 +### 경로는 Claude가 알아서 판단해야 한다                       
+       6  
+       7 -- **Expected**: User specifies output paths; Claude documents "
+         -default" vs "exception" rules                                  
+       8 -- **Actual**: User expects Claude to determine paths from conte
+         -xt. Separate "override" rules are redundant — if the user menti
+         -ons a path, Claude naturally uses it                           
+       9 -- **Takeaway**: Don't create branching rules for what a single 
+         -principle covers                                               
+       7 +- **예상**: 유저가 경로를 지정하고, Claude는 "기본값" vs "예외"
+         + 규칙을 문서화                                                 
+       8 +- **실제**: 유저는 Claude가 맥락에서 경로를 판단하길 기대함. " 
+         +유저가 경로를 명시하면 그걸 따른다"는 별도 규칙이 아니라, 기본 
+         +동작에 이미 포함된 것                                          
+       9 +- **시사점**: 하나의 원칙이 이미 커버하는 것을 분기 규칙으로 만
+         +들지 말 것                                                     
+      10  
+      11 -When stating a default behavior → check if the "exception" case
+         - is already handled by the default                             
+      11 +기본 동작을 정의할 때 → "예외" 케이스가 이미 기본 동작에 포함되
+         +는지 확인                                                      
+      12  
+      13 -### Progressive disclosure doesn't need to be documented as a r
+         -ule                                                            
+      13 +### Progressive disclosure는 규칙으로 명시할 필요가 없다       
+      14  
+      15 -- **Expected**: Add a note about progressive disclosure in CLAU
+         -DE.md                                                          
+      16 -- **Actual**: The existing CLAUDE.md already follows the patter
+         -n (lean top-level, details in docs/). New content naturally fol
+         -lows the same structure without being told                     
+      17 -- **Takeaway**: If a codebase already embodies a principle stru
+         -cturally, documenting the principle as a rule is unnecessary   
+      15 +- **예상**: CLAUDE.md에 progressive disclosure 원칙을 문서화   
+      16 +- **실제**: 기존 CLAUDE.md가 이미 그 패턴을 따르고 있음 (최상위
+         +는 간결하게, 상세 내용은 docs/에). 새 콘텐츠도 자연히 같은 구조
+         +를 따름                                                        
+      17 +- **시사점**: 코드베이스가 이미 구조적으로 원칙을 체현하고 있다
+         +면, 그 원칙을 규칙으로 명시하는 건 불필요                      
+      18  
+      19 -### Lessons vs retrospective are different concerns            
+      19 +### Lessons와 회고(retrospective)는 다른 관심사다              
+      20  
+      21 -- **Expected**: User's retrospective prompt could be integrated
+         - into lessons.md                                               
+      22 -- **Actual**: Lessons are incremental (accumulated during sessi
+         -on). Retrospectives are comprehensive (end-of-session reflectio
+         -n covering prompting habits, learning resources, skill discover
+         -y). Coupling them muddies both                                 
+      23 -- **Takeaway**: When two things share a theme but differ in tim
+         -ing and scope, keep them separate                              
+      21 +- **예상**: 유저의 회고 프롬프트를 lessons.md에 통합할 수 있을 
+         +것                                                             
+      22 +- **실제**: Lessons는 세션 중 점진적으로 쌓이는 것. 회고는 세션
+         + 종료 시점의 포괄적 반성 (프롬프팅 습관, 학습자료, 스킬 탐색 등
+         +). 결합하면 둘 다 흐려짐                                       
+      23 +- **시사점**: 주제가 비슷해도 시점과 범위가 다르면 분리할 것   
+      24  
+      25 -### CLAUDE.md instructs Claude, not the user                   
+      25 +### CLAUDE.md는 Claude를 위한 것이지, 유저를 위한 것이 아니다  
+      26  
+      27 -- **Expected**: Add reminders for user to run `/retro` and `/ex
+         -port` at session end                                           
+      28 -- **Actual**: User felt this was "slightly awkward" — CLAUDE.md
+         - defines Claude's behavior, not user checklists. User habits do
+         -n't belong there                                               
+      29 -- **Takeaway**: Keep CLAUDE.md's audience clear: it's for Claud
+         -e, not for the user                                            
+      27 +- **예상**: 세션 종료 시 `/retro`, `/export` 실행을 유저에게 권
+         +하는 내용을 CLAUDE.md에 추가                                   
+      28 +- **실제**: 유저 스스로 "살짝 애매하다"고 느낌. CLAUDE.md는 Cla
+         +ude의 동작을 정의하는 곳이지, 유저에게 할 일을 알려주는 곳이 아
+         +님                                                             
+      29 +- **시사점**: CLAUDE.md의 독자를 명확히 할 것 — Claude에게 하는
+         + 지시만 담기                                                   
+      30 +                                                               
+      31 +### Lessons의 언어는 사용자 언어를 따라야 한다                 
+      32 +                                                               
+      33 +- **예상**: 프로토콜 문서(docs/)의 Language 규칙(English only) 
+         +을 따라 영어로 작성                                            
+      34 +- **실제**: Lessons는 유저가 읽는 산출물이므로 유저의 언어로 작
+         +성해야 자연스러움                                              
+      35 +- **시사점**: 문서의 독자가 누구인지에 따라 언어 규칙이 달라져 
+         +야 한다                                                        
+
+⏺ Bash(git add docs/plan-and-lessons.md
+      prompt-logs/260130-plan-lesson/lessons.md && git commit -m "Add user
+      language rule for lessons and rewrite in Korean…)
+  ⎿ [main 1c6a86c] Add user language rule for lessons and rewrite in Korean
+     2 files changed, 39 insertions(+), 29 deletions(-)
+     rewrite prompt-logs/260130-plan-lesson/lessons.md (97%)
+
+
+⏺ 완료했습니다. 프로토콜 문서에 ### Language 섹션을 추가하고, 이번 세션
+  lessons.md를 한글로 다시 작성했습니다. 마지막 항목("Lessons의 언어는 사용자
+  언어를 따라야 한다")도 이번 핑퐁에서 배운 것으로 추가했습니다.
+
+✻ Cooked for 37s
