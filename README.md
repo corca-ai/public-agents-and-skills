@@ -41,6 +41,7 @@ claude plugin update <plugin-name>@corca-plugins   # 기존 플러그인 업데�
 | [suggest-tidyings](#suggest-tidyings) | Skill | 안전한 리팩토링 기회 제안 |
 | [retro](#retro) | Skill | 세션 종료 시 포괄적 회고 수행 |
 | [url-export](#url-export) | Skill | URL 자동 감지 후 적절한 export 스킬로 위임 |
+| [web-search](#web-search) | Skill | 웹 검색, 코드 검색, URL 콘텐츠 추출 |
 | [attention-hook](#attention-hook) | Hook | 대기 상태일 때 Slack 알림 |
 
 ## Skills
@@ -306,6 +307,42 @@ URL 유형을 자동 감지하여 적절한 export 스킬(g-export, slack-to-md,
 **주의사항**:
 - 각 서비스의 개별 스킬이 설치되어 있어야 합니다. 미설치 시 안내 메시지를 표시합니다.
 - 개별 스킬(`/g-export`, `/slack-to-md`, `/notion-to-md`)도 독립적으로 계속 사용 가능합니다.
+
+### [web-search](plugins/web-search/skills/web-search/SKILL.md)
+
+**설치**:
+```bash
+claude plugin marketplace add https://github.com/corca-ai/claude-plugins.git
+claude plugin install web-search@corca-plugins
+```
+
+**갱신**:
+```bash
+claude plugin marketplace update corca-plugins
+claude plugin update web-search@corca-plugins
+```
+
+Tavily와 Exa REST API를 활용하여 웹 검색, 코드 검색, URL 콘텐츠 추출을 수행하는 스킬입니다. curl을 직접 호출하여 외부 검색 서비스에 접근합니다.
+
+**사용법**:
+- 웹 검색: `/web-search <query>`
+- 코드/기술 검색: `/web-search code <query>`
+- URL 콘텐츠 추출: `/web-search extract <url>`
+
+**주요 기능**:
+- Tavily API를 통한 일반 웹 검색 (답변 요약 + 소스 목록)
+- Exa API를 통한 코드/기술 전문 검색 (GitHub, Stack Overflow, 문서 등)
+- URL에서 마크다운 형태로 콘텐츠 추출
+- jq 또는 python3 자동 선택으로 JSON 파싱
+- 검색 결과에 Sources 섹션 포함
+
+**필수 조건**:
+- `TAVILY_API_KEY` — 웹 검색과 URL 추출에 필요 ([발급](https://app.tavily.com/home))
+- `EXA_API_KEY` — 코드 검색에 필요 ([발급](https://dashboard.exa.ai/api-keys))
+- API 키는 `~/.zshrc` 또는 `~/.claude/.env`에 설정
+
+**주의사항**:
+- 쿼리가 외부 검색 서비스로 전송됩니다. 기밀 코드나 민감한 정보를 검색 쿼리에 포함하지 마세요.
 
 ## Hooks
 

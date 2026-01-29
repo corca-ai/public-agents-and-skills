@@ -5,7 +5,7 @@ Accumulated context from retrospectives. Each session's retro may add to this do
 ## Project
 
 - corca-plugins is a Claude Code plugin marketplace for "AI Native Product Teams"
-- Contains skills (clarify, interview, g-export, slack-to-md, notion-to-md, suggest-tidyings, retro), hooks (attention-hook), and supporting docs
+- Contains skills (clarify, interview, g-export, slack-to-md, notion-to-md, suggest-tidyings, retro, url-export, web-search), hooks (attention-hook), and supporting docs
 - Plan & Lessons Protocol creates `prompt-logs/{YYMMDD}-{title}/` per session with plan.md, lessons.md, and optionally retro.md
 
 ## Design Principles
@@ -20,3 +20,9 @@ Accumulated context from retrospectives. Each session's retro may add to this do
 - Documentation language: English for docs/, Korean for README.md and AI_NATIVE_PRODUCT_TEAM.md
 - Lessons and retro: written in the user's language
 - Plugin structure: `plugins/{name}/.claude-plugin/plugin.json` + `plugins/{name}/skills/{name}/SKILL.md`
+
+## Hook Configuration
+
+- Project hooks go in `.claude/settings.json` under the `"hooks"` key — NOT `.claude/hooks.json` (which is plugin-only format)
+- `type: prompt` hooks work with any hook event and are simpler for context injection (no JSON formatting needed)
+- Claude Code hook docs: https://code.claude.com/docs/en/hooks.md

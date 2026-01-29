@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "EnterPlanMode",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "READ and FOLLOW the Plan & Lessons Protocol (docs/plan-and-lessons.md)."
+          }
+        ]
+      }
+    ]
+  }
+}

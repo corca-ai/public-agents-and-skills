@@ -24,6 +24,7 @@ For non-trivial implementation tasks (new plugins, multi-file changes, architect
 - The user communicates in Korean. Respond in Korean for conversation, English for code and docs (per Language rules below).
 - The user expects protocols in CLAUDE.md to be followed without explicit reminders.
 - Prefer short, precise feedback loops — ask for intent confirmation before large implementations.
+- When researching Claude Code features (hooks, settings, plugins), always verify against the official docs (https://code.claude.com/docs/en/) via WebFetch. Do not rely solely on claude-code-guide agent responses.
 
 ## Language
 
