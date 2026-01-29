@@ -44,8 +44,16 @@ claude plugin update <plugin-name>@corca-plugins   # 기존 플러그인 업데�
 
 ### [clarify](plugins/clarify/skills/clarify/SKILL.md)
 
+**설치**:
 ```bash
-/plugin install clarify@corca-plugins
+claude plugin marketplace add https://github.com/corca-ai/claude-plugins.git
+claude plugin install clarify@corca-plugins
+```
+
+**갱신**:
+```bash
+claude plugin marketplace update corca-plugins
+claude plugin update clarify@corca-plugins
 ```
 
 모호하거나 불명확한 요구사항을 반복적인 질문을 통해 명확하고 실행 가능한 사양으로 변환하는 스킬입니다. [Team Attention](https://github.com/team-attention)에서 만든 [Clarify 스킬](https://github.com/team-attention/plugins-for-claude-natives/blob/main/plugins/clarify/SKILL.md)을 가져와서 커스터마이즈했습니다. (사용법 참조: 정구봉님 [링크드인 포스트](https://www.linkedin.com/posts/gb-jeong_%ED%81%B4%EB%A1%9C%EB%93%9C%EC%BD%94%EB%93%9C%EA%B0%80-%EA%B0%9D%EA%B4%80%EC%8B%9D%EC%9C%BC%EB%A1%9C-%EC%A7%88%EB%AC%B8%ED%95%98%EA%B2%8C-%ED%95%98%EB%8A%94-skills%EB%A5%BC-%EC%82%AC%EC%9A%A9%ED%95%B4%EB%B3%B4%EC%84%B8%EC%9A%94-clarify-activity-7413349697022570496-qLts))
@@ -59,11 +67,19 @@ claude plugin update <plugin-name>@corca-plugins   # 기존 플러그인 업데�
 
 ### [interview](plugins/interview/skills/interview/SKILL.md)
 
+**설치**:
 ```bash
-/plugin install interview@corca-plugins
+claude plugin marketplace add https://github.com/corca-ai/claude-plugins.git
+claude plugin install interview@corca-plugins
 ```
 
-코르카의 AX 컨설턴트로 합류하신 [최정혁님](https://denoiser.club/)이 본인의 취향에 맞게 만드신 스킬입니다. 목적은 Clarify와 유사합니다. 구조화된 인터뷰를 통해 요구사항, 제약사항, 설계 결정을 추출하는 스킬입니다. 대화를 통해 프로젝트의 핵심 요구사항을 발견하고 문서화합니다.
+**갱신**:
+```bash
+claude plugin marketplace update corca-plugins
+claude plugin update interview@corca-plugins
+```
+
+코르카의 AX 컨설턴트 [최정혁님](https://denoiser.club/)이 본인의 취향에 맞게 만드신 스킬입니다. 목적은 Clarify와 유사합니다. 구조화된 인터뷰를 통해 요구사항, 제약사항, 설계 결정을 추출하는 스킬입니다. 대화를 통해 프로젝트의 핵심 요구사항을 발견하고 문서화합니다.
 
 **사용법**:
 - `/interview <topic>` - 새 인터뷰 시작 (예: `/interview auth-system`)
@@ -83,8 +99,16 @@ claude plugin update <plugin-name>@corca-plugins   # 기존 플러그인 업데�
 
 ### [g-export](plugins/g-export/skills/g-export/SKILL.md)
 
+**설치**:
 ```bash
-/plugin install g-export@corca-plugins
+claude plugin marketplace add https://github.com/corca-ai/claude-plugins.git
+claude plugin install g-export@corca-plugins
+```
+
+**갱신**:
+```bash
+claude plugin marketplace update corca-plugins
+claude plugin update g-export@corca-plugins
 ```
 
 공개된 Google 문서(Slides, Docs, Sheets)를 로컬 파일로 다운로드하는 스킬입니다. ([작업 배경 블로그 글](https://www.stdy.blog/1p1w-02-g-export/))
@@ -113,8 +137,16 @@ g-export는 LLM이 문서 내용을 쉽게 파악할 수 있도록 텍스트 기
 
 ### [slack-to-md](plugins/slack-to-md/skills/slack-to-md/SKILL.md)
 
+**설치**:
 ```bash
-/plugin install slack-to-md@corca-plugins
+claude plugin marketplace add https://github.com/corca-ai/claude-plugins.git
+claude plugin install slack-to-md@corca-plugins
+```
+
+**갱신**:
+```bash
+claude plugin marketplace update corca-plugins
+claude plugin update slack-to-md@corca-plugins
 ```
 
 1개 이상의 Slack 메시지 URL을 단일한 마크다운 문서로 변환하는 스킬입니다. ([작업 배경 블로그 글](https://www.stdy.blog/1p1w-01-slack-to-md/))
@@ -140,8 +172,16 @@ g-export는 LLM이 문서 내용을 쉽게 파악할 수 있도록 텍스트 기
 
 ### [suggest-tidyings](plugins/suggest-tidyings/skills/suggest-tidyings/SKILL.md)
 
+**설치**:
 ```bash
-/plugin install suggest-tidyings@corca-plugins
+claude plugin marketplace add https://github.com/corca-ai/claude-plugins.git
+claude plugin install suggest-tidyings@corca-plugins
+```
+
+**갱신**:
+```bash
+claude plugin marketplace update corca-plugins
+claude plugin update suggest-tidyings@corca-plugins
 ```
 
 Kent Beck의 "Tidy First?" 철학에 기반하여 최근 커밋들을 분석하고 안전한 리팩토링 기회를 찾아주는 스킬입니다. Sub-agent를 병렬로 활용하여 여러 커밋을 동시에 분석합니다.
@@ -166,11 +206,19 @@ Kent Beck의 "Tidy First?" 철학에 기반하여 최근 커밋들을 분석하�
 
 ### [attention-hook](plugins/attention-hook/hooks/hooks.json)
 
+**설치**:
 ```bash
-/plugin install attention-hook@corca-plugins
+claude plugin marketplace add https://github.com/corca-ai/claude-plugins.git
+claude plugin install attention-hook@corca-plugins
 ```
 
-Claude Code가 사용자의 입력을 기다릴 때 Slack으로 푸시 알림을 보내는 훅입니다. 알림에 이미지를 제외한 작업 컨텍스트(사용자 요청, Claude 응답, AskUserQuestion을 통한 질문 내용, Todo 상태)가 포함되어 어떤 작업인지 즉시 파악할 수 있습니다. 원격 서버에 세팅해뒀을 때 유용합니다.
+**갱신**:
+```bash
+claude plugin marketplace update corca-plugins
+claude plugin update attention-hook@corca-plugins
+```
+
+Claude Code가 사용자의 입력을 기다릴 때 Slack으로 푸시 알림을 보내는 훅입니다. 알림에 이미지를 제외한 작업 컨텍스트(사용자 요청, Claude 응답, AskUserQuestion을 통한 질문 내용, Todo 상태)가 포함되어 어떤 작업인지 즉시 파악할 수 있습니다. 원격 서버에 세팅해뒀을 때 유용합니다. ([작업 배경 블로그 글](https://www.stdy.blog/1p1w-03-attention-hook/))
 
 
 **알림 트리거 조건**:
