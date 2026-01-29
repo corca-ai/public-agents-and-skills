@@ -8,6 +8,8 @@ Protocol for persisting planning artifacts and session learnings.
 
 `prompt-logs/{YYMMDD}-{title}/plan.md`
 
+The `{title}` must reflect the current session's task, not a previous session's. Even if the input spec or reference document lives in an existing `prompt-logs/` directory, always create a new directory named after the current task.
+
 Determine the path from the user's request. If the user specifies a path, use it.
 
 ### Required Sections
@@ -33,6 +35,10 @@ Then [expected outcome]
 ```
 
 When starting implementation, check Deferred Actions first and handle the items.
+
+### Language
+
+Write the plan in English. The plan is primarily for the agent, not the user.
 
 ### Timing
 

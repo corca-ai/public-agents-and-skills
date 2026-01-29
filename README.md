@@ -40,6 +40,7 @@ claude plugin update <plugin-name>@corca-plugins   # 기존 플러그인 업데�
 | [notion-to-md](#notion-to-md) | Skill | 공개 Notion 페이지를 마크다운으로 변환 |
 | [suggest-tidyings](#suggest-tidyings) | Skill | 안전한 리팩토링 기회 제안 |
 | [retro](#retro) | Skill | 세션 종료 시 포괄적 회고 수행 |
+| [url-export](#url-export) | Skill | URL 자동 감지 후 적절한 export 스킬로 위임 |
 | [attention-hook](#attention-hook) | Hook | 대기 상태일 때 Slack 알림 |
 
 ## Skills
@@ -270,6 +271,41 @@ claude plugin update retro@corca-plugins
 
 **출력물**:
 - `prompt-logs/{YYMMDD}-{title}/retro.md` — plan.md, lessons.md와 같은 디렉토리에 저장
+
+### [url-export](plugins/url-export/skills/url-export/SKILL.md)
+
+**설치**:
+```bash
+claude plugin marketplace add https://github.com/corca-ai/claude-plugins.git
+claude plugin install url-export@corca-plugins
+```
+
+**갱신**:
+```bash
+claude plugin marketplace update corca-plugins
+claude plugin update url-export@corca-plugins
+```
+
+URL 유형을 자동 감지하여 적절한 export 스킬(g-export, slack-to-md, notion-to-md)로 위임하는 통합 스킬입니다. 사용자가 어떤 스킬을 호출해야 하는지 기억할 필요 없이, 하나의 명령으로 모든 외부 콘텐츠를 내보낼 수 있습니다.
+
+**사용법**:
+- 명시적 호출: `/url-export <url>`
+- URL 감지: 지원되는 서비스의 URL을 에이전트가 발견하면 자동으로 적절한 스킬로 위임
+
+**지원 서비스**:
+
+| URL 패턴 | 위임 대상 |
+|----------|----------|
+| `docs.google.com/*` | g-export |
+| `*.slack.com/archives/*/p*` | slack-to-md |
+| `*.notion.site/*`, `www.notion.so/*` | notion-to-md |
+| 기타 URL | WebFetch 폴백 |
+
+**저장 위치**: 각 서비스별 기본 디렉토리 사용 (통합 기본값: `./exports/`, 환경변수 `CLAUDE_CORCA_URL_EXPORT_OUTPUT_DIR`로 변경 가능)
+
+**주의사항**:
+- 각 서비스의 개별 스킬이 설치되어 있어야 합니다. 미설치 시 안내 메시지를 표시합니다.
+- 개별 스킬(`/g-export`, `/slack-to-md`, `/notion-to-md`)도 독립적으로 계속 사용 가능합니다.
 
 ## Hooks
 

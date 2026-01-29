@@ -17,6 +17,8 @@ Do NOT consider the task complete without updating related docs.
 When entering plan mode, follow the [Plan & Lessons Protocol](docs/plan-and-lessons.md).
 This is separate from the system plan file — create `prompt-logs/` directory with plan.md and lessons.md regardless of where the system stores its plan.
 
+For non-trivial implementation tasks (new plugins, multi-file changes, architectural decisions), proactively use `EnterPlanMode` even when the user does not explicitly request it.
+
 ## Collaboration Style
 
 - The user communicates in Korean. Respond in Korean for conversation, English for code and docs (per Language rules below).

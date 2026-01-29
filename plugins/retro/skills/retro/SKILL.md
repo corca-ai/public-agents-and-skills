@@ -97,6 +97,17 @@ retro.md is session-specific. Findings worth keeping across sessions should be p
 2. If yes: Edit CLAUDE.md with the changes
 3. If no: suggestions remain documented in retro.md for future reference
 
+### 6. Post-Retro Discussion
+
+After writing retro.md and persisting findings, the user will often read the retro and continue the conversation — asking questions, giving corrections, raising new points. This is expected and valuable.
+
+During any post-retro conversation:
+- Update `retro.md` — append learnings under `### Post-Retro Findings` in Section 2
+- Update `lessons.md` — add new learnings from the discussion
+- If any learning should be persistent beyond the session (protocol docs, CLAUDE.md, etc.), apply it to the appropriate file
+
+Do not prompt the user to start this discussion. Simply stay aware that conversation after the retro may produce learnings worth capturing.
+
 ## Output Format
 
 ```markdown

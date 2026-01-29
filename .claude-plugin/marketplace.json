@@ -56,6 +56,12 @@
       "source": "./plugins/retro",
       "description": "A skill that performs comprehensive session retrospectives",
       "keywords": ["retrospective", "session-review", "learning", "improvement"]
+    },
+    {
+      "name": "url-export",
+      "source": "./plugins/url-export",
+      "description": "A unified skill that auto-detects URL types and delegates to the appropriate export skill",
+      "keywords": ["url", "export", "google", "slack", "notion", "unified"]
     }
   ]
 }
