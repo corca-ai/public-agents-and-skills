@@ -5,6 +5,7 @@
 2. For plugin work, also read:
    - [Modifying/Testing/Deploying Plugins](docs/modifying-plugin.md)
    - [Adding New Plugins](docs/adding-plugin.md)
+   - [Skills Guide](docs/skills-guide.md) — skill structure, env var conventions, design principles
 
 Do NOT proceed with code changes until completing the above steps.
 

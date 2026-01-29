@@ -1,11 +1,28 @@
 ---
 name: slack-to-md
-description: Convert Slack thread URLs to markdown documents. Trigger on "slack-to-md" command or when user provides Slack URLs (https://*.slack.com/archives/*/p*). Also handles updating existing markdown files from their source Slack threads.
+description: |
+  Convert Slack thread URLs to markdown documents.
+  Trigger on "slack-to-md" command or when user provides Slack URLs
+  (https://*.slack.com/archives/*/p*). Also handles updating existing
+  markdown files from their source Slack threads.
 ---
 
-# Slack to Markdown Converter
+# Slack to Markdown Converter (/slack-to-md)
 
 Convert Slack thread URLs to well-formatted markdown documents.
+
+## Configuration
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `CLAUDE_CORCA_SLACK_TO_MD_OUTPUT_DIR` | `./slack-outputs` | Default output directory for generated markdown files and attachments |
+
+```bash
+# ~/.zshrc or ~/.bashrc
+export CLAUDE_CORCA_SLACK_TO_MD_OUTPUT_DIR="./docs/slack"
+```
+
+**Priority**: CLI output path > `CLAUDE_CORCA_SLACK_TO_MD_OUTPUT_DIR` env var > `./slack-outputs`
 
 ## Prerequisites
 
@@ -24,7 +41,16 @@ Before using this skill, the following setup is required:
 
 ## Workflow
 
-### 1. Parse Input
+### 1. Determine Output Directory
+
+Resolve `OUTPUT_DIR` using the priority chain:
+1. If the user specifies an output path → use that directory
+2. Otherwise check `CLAUDE_CORCA_SLACK_TO_MD_OUTPUT_DIR` env var
+3. Fall back to `{PROJECT_ROOT}/slack-outputs/`
+
+Use the resolved `OUTPUT_DIR` in all commands below.
+
+### 2. Parse Input
 
 **Slack URL format:** `https://{workspace}.slack.com/archives/{channel_id}/p{timestamp}`
 
@@ -35,13 +61,13 @@ Extract:
 
 **Existing .md file**: Read and extract Slack URL from `> Source:` line.
 
-### 2. Execute Conversion
+### 3. Execute Conversion
 
 Run the two scripts in a pipe:
 
 ```bash
-node {SKILL_DIR}/scripts/slack-api.mjs <channel_id> <thread_ts> --attachments-dir {PROJECT_ROOT}/slack-outputs/attachments | \
-  {SKILL_DIR}/scripts/slack-to-md.sh <channel_id> <thread_ts> <workspace> {PROJECT_ROOT}/slack-outputs/<output_file>.md [title]
+node {SKILL_DIR}/scripts/slack-api.mjs <channel_id> <thread_ts> --attachments-dir OUTPUT_DIR/attachments | \
+  {SKILL_DIR}/scripts/slack-to-md.sh <channel_id> <thread_ts> <workspace> OUTPUT_DIR/<output_file>.md [title]
 ```
 
 - `{SKILL_DIR}`: Shown at the top when skill is invoked as "Base directory for this skill: ..."
@@ -49,7 +75,7 @@ node {SKILL_DIR}/scripts/slack-api.mjs <channel_id> <thread_ts> --attachments-di
 - `slack-api.mjs`: Fetches thread data from Slack API, outputs JSON. With `--attachments-dir`, also downloads file attachments to the specified directory.
 - `slack-to-md.sh`: Reads JSON from stdin, generates markdown file. If files have `local_path`, renders them as links (images inline, others as download links).
 
-### 3. Rename to Meaningful Filename
+### 4. Rename to Meaningful Filename
 
 After fetching, read the generated markdown file and extract the first message content. Then rename the file to a meaningful name:
 
@@ -60,10 +86,10 @@ After fetching, read the generated markdown file and extract the first message c
    - Replace spaces with hyphens
    - Remove special characters (keep only alphanumeric, hyphens, Korean characters)
    - Truncate to reasonable length (max 50 chars)
-4. Rename the file: `mv {old_file}.md {PROJECT_ROOT}/slack-outputs/{sanitized_title}.md`
+4. Rename the file: `mv {old_file}.md OUTPUT_DIR/{sanitized_title}.md`
 5. Report the new filename to the user
 
-### 4. Handle Errors
+### 5. Handle Errors
 
 The `slack-api.mjs` script automatically handles common errors:
 - `not_in_channel`: Automatically joins the channel and retries

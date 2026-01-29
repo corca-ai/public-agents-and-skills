@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-01-30
+
+### Added
+- Skills: `notion-to-md` - Converts public Notion pages to local Markdown files via Notion's v3 API (Python 3.7+ stdlib only)
+- Docs: `docs/skills-guide.md` - Reference document for skill structure, env var naming conventions, and design principles
+- Requirements: `requirements/url-export.md` - Plan document for unified URL export skill (`url-export`)
+
+### Changed
+- Skills: `g-export` - Added `CLAUDE_CORCA_G_EXPORT_OUTPUT_DIR` env var for configurable output directory
+- Skills: `slack-to-md` - Added `CLAUDE_CORCA_SLACK_TO_MD_OUTPUT_DIR` env var for configurable output directory
+- Skills: Unified SKILL.md structure across all three export skills (g-export, slack-to-md, notion-to-md) with consistent Configuration section, env var table, and priority chain
+
 ## [1.1.0] - 2025-01-10
 
 ### Added

@@ -1,6 +1,6 @@
 {
-  "name": "slack-to-md",
-  "description": "A skill that converts Slack threads into Markdown",
+  "name": "notion-to-md",
+  "description": "A skill that converts public Notion pages to local Markdown files",
   "version": "1.4.0",
   "author": {
     "name": "Corca",

@@ -37,6 +37,7 @@ claude plugin update <plugin-name>@corca-plugins   # 기존 플러그인 업데�
 | [interview](#interview) | Skill | 구조화된 인터뷰로 요구사항 추출 |
 | [g-export](#g-export) | Skill | Google 문서를 로컬 파일로 다운로드 |
 | [slack-to-md](#slack-to-md) | Skill | Slack 메시지를 마크다운으로 변환 |
+| [notion-to-md](#notion-to-md) | Skill | 공개 Notion 페이지를 마크다운으로 변환 |
 | [suggest-tidyings](#suggest-tidyings) | Skill | 안전한 리팩토링 기회 제안 |
 | [attention-hook](#attention-hook) | Hook | 대기 상태일 때 Slack 알림 |
 
@@ -134,6 +135,43 @@ g-export는 LLM이 문서 내용을 쉽게 파악할 수 있도록 텍스트 기
 **추출 예시(Sheet → TOON → Markdown)**:
 
 <img src="assets/g-export-sheet-md-example.png" alt="Sheet → TOON → Markdown" width="400">
+
+### [notion-to-md](plugins/notion-to-md/skills/notion-to-md/SKILL.md)
+
+**설치**:
+```bash
+claude plugin marketplace add https://github.com/corca-ai/claude-plugins.git
+claude plugin install notion-to-md@corca-plugins
+```
+
+**갱신**:
+```bash
+claude plugin marketplace update corca-plugins
+claude plugin update notion-to-md@corca-plugins
+```
+
+공개된 Notion 페이지를 로컬 마크다운 파일로 변환하는 스킬입니다. Notion의 비공개 v3 API를 사용하며, Python 3.7+ 표준 라이브러리만 필요합니다 (pip 패키지나 API 키 불필요).
+
+**사용법**:
+- 명시적 호출: `/notion-to-md <url>`
+- URL 감지: Notion 페이지 URL을 에이전트가 발견하면 자동으로 변환 제안
+
+**지원 URL 형식**:
+- `https://workspace.notion.site/Title-{32hex}`
+- `https://www.notion.so/Title-{32hex}`
+- `https://www.notion.so/{32hex}`
+
+**저장 위치**: `./notion-outputs/` 폴더 (환경변수 `CLAUDE_CORCA_NOTION_TO_MD_OUTPUT_DIR`로 변경 가능)
+
+**필수 조건**:
+- Notion 페이지가 웹에 공개(Share → Publish)되어 있어야 함
+- Python 3.7+
+
+**주의사항**:
+- 하위 페이지: `<!-- missing block -->` 으로 표시됨
+- 이미지: URL 참조만 포함 (Notion S3 URL은 만료됨)
+- 데이터베이스 뷰(`collection_view`): 미지원
+- 비공식 Notion v3 API에 의존
 
 ### [slack-to-md](plugins/slack-to-md/skills/slack-to-md/SKILL.md)
 

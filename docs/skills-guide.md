@@ -1,0 +1,67 @@
+# Skills Guide
+
+## Skill Structure
+
+```
+.claude/skills/{skill-name}/
+├── SKILL.md              # Required. Core instructions only (<500 lines)
+├── references/           # Optional. Detailed docs
+│   └── *.md
+└── scripts/              # Optional. Executable utilities
+    └── *.sh
+```
+
+In this marketplace, skills are located within `plugins/{name}/skills/{name}/`.
+
+## Skill Modification Procedure
+
+1. **Modify skill files in the plugin directory only**
+2. **Keep SKILL.md concise** - Move details to `references/`
+3. **No duplication** - Don't repeat content between SKILL.md and references
+4. **Progressive Disclosure** - Load SKILL.md on trigger, load references as needed
+5. **English only** - All skill files (SKILL.md, references) must be written in English
+
+## Design Principles (skill-creator philosophy)
+
+- **Concise is Key**: Context window is shared resource. Don't explain what Claude already knows
+- **Set Appropriate Degrees of Freedom**:
+  - High freedom (text instructions) - Multiple valid approaches
+  - Medium freedom (pseudocode) - Preferred pattern with allowed variations
+  - Low freedom (specific scripts) - Exact sequence required
+
+## Adding Environment Variables
+
+### Naming Convention
+
+For skills distributed via [corca-ai/claude-plugins](https://github.com/corca-ai/claude-plugins):
+
+```
+CLAUDE_CORCA_<SKILL_NAME>_<SETTING>
+```
+
+- `CLAUDE_` — Claude Code ecosystem prefix
+- `CORCA_` — Marketplace (corca-ai) namespace, avoids collision with other Claude plugins
+- `<SKILL_NAME>` — Skill identifier (e.g., `NOTION_TO_MD`)
+- `<SETTING>` — Specific config (e.g., `OUTPUT_DIR`)
+
+Example: `CLAUDE_CORCA_NOTION_TO_MD_OUTPUT_DIR`
+
+### Why Environment Variables
+
+Plugin/skill directories are replaced on update (version-specific cache). User config **must** live outside the skill directory. Environment variables in shell profile (`~/.zshrc`) survive any plugin update.
+
+### Priority Chain
+
+CLI argument > Environment variable > Hardcoded default
+
+### Documentation
+
+Add environment variable section to `references/` or SKILL.md:
+
+```markdown
+## Configuration
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `CLAUDE_CORCA_<SKILL>_<SETTING>` | `default` | Description |
+```

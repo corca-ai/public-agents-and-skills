@@ -1,0 +1,774 @@
+
+ ▐▛███▜▌   Claude Code v2.1.22
+▝▜█████▛▘  Opus 4.5 · Claude Max
+  ▘▘ ▝▝    ~/codes/corca/claude-plugins
+
+❯ 1. /Users/ted/codes/works/.claude/skills/notion-to-md 를 여기에           
+  플러그인으로 적절하게 옮기고 싶습니다.                                    
+  2. /Users/ted/codes/works/docs/skills-guide.md 도 적절히 가져오고         
+  싶습니다.                                                                 
+  3. 현재 export 하는 스킬이 2개 존재하는데 이제 3개가 됩니다. 3개의 패턴을 
+  동일하게 (특히 파일을 다운받는 경로 설정 방법, 에이전트가 발견하는 방법)  
+  만들어주세요.                                                             
+  4. 나아가 어떤 외부 public URL이던 적절히 다운받을 수 있는 새로운 스킬을  
+  만들려고 합니다. 지원하는 외부 서비스가 지금은 slack, google 문서,        
+  notion인 셈이죠. 의도를 이해하셨나요? 이 스킬에 대한 계획 문서를          
+  만들어주세요.                                                             
+
+⏺ Entered plan mode
+  Claude is now exploring and designing an implementation approach.
+
+⏺ Let me start by exploring the current project structure and the source files
+  to understand existing patterns.
+
+⏺ 2 Explore agents finished (ctrl+o to expand)
+   ├─ Explore current project structure · 36 tool uses · 46.7k tokens
+   │  ⎿  Done
+   └─ Explore notion-to-md source skill · 5 tool uses · 12.1k tokens
+      ⎿  Done
+
+⏺ Good, I have a comprehensive understanding of both the project and the source
+  skill. Let me now read the critical files to compare the exact patterns across
+   the existing export skills.
+
+⏺ Read 4 files (ctrl+o to expand)
+
+⏺ Now let me read the plugin.json files and additional details to understand the
+   full patterns.
+
+⏺ Read 8 files (ctrl+o to expand)
+
+⏺ Now let me check if g-export has any environment variable configuration and
+  look at the slack-to-md scripts more closely.
+
+⏺ Searched for 3 patterns, read 3 files (ctrl+o to expand)
+
+⏺ Now I have a thorough understanding of everything. Let me design the
+  implementation plan.
+
+⏺ Plan(Design implementation plan)
+  ⎿  Done (28 tool uses · 56.0k tokens · 3m 35s)
+
+⏺ Now let me write the final plan file.
+
+⏺ Updated plan
+  ⎿  /plan to preview
+  ⎿ Tool use rejected with user message: skill 이름은 export로 할 수 없습니다. 
+    이미 claude에 관련 명령어가 존재합니다. export-public-url? 더 좋은 이름이 
+    있을까요?
+
+⏺ User answered Claude's questions:
+  ⎿  · Which name do you prefer for the unified URL export skill? → 
+     url-export
+
+⏺ Read 1 file (ctrl+o to expand)
+
+⏺ Updated plan
+  ⎿  /plan to preview
+
+⏺ Updated plan
+  ⎿  /plan to preview
+
+⏺ Plan updated with url-export as the skill name. The key references
+  (/url-export <url>, CLAUDE_CORCA_URL_EXPORT_OUTPUT_DIR,
+  requirements/url-export.md) are all reflected.
+
+⏺ User approved Claude's plan
+  ⎿  Plan saved to: ~/.claude/plans/sleepy-inventing-pudding.md · /plan to 
+     edit
+     Plan: notion-to-md 플러그인 추가 + export 스킬 통일 + 통합 스킬 계획
+
+     Summary
+
+     4가지 작업: (1) notion-to-md 플러그인 이식, (2) skills-guide.md 이식,
+     (3) 3개 export 스킬 패턴 통일, (4) 통합 export 스킬 계획 문서 작성.
+
+     ---
+     Phase 1: notion-to-md 플러그인 이식 (Task 1 + 2)
+
+     새로 만들 파일 (5개)
+     File: plugins/notion-to-md/.claude-plugin/plugin.json
+     Description: Plugin manifest (v1.4.0)
+     ────────────────────────────────────────
+     File: plugins/notion-to-md/skills/notion-to-md/SKILL.md
+     Description: Source에서 복사 + script path를 {SKILL_DIR}/scripts/로
+     변경
+     ────────────────────────────────────────
+     File: plugins/notion-to-md/skills/notion-to-md/scripts/notion-to-md.py
+     Description: Source에서 그대로 복사
+     ────────────────────────────────────────
+     File:
+     plugins/notion-to-md/skills/notion-to-md/references/supported-blocks.md
+     Description: Source에서 그대로 복사
+     ────────────────────────────────────────
+     File: docs/skills-guide.md
+     Description: Source에서 복사 + projects/ 관련 문구 제거 (이 repo에 해당
+      없음)
+
+     수정할 파일 (4개)
+     File: .claude-plugin/marketplace.json
+     Change: notion-to-md 항목 추가, version → 1.4.0
+     ────────────────────────────────────────
+     File: README.md
+     Change: 플러그인 테이블에 notion-to-md 행 추가 + Skills 섹션에
+     notion-to-md
+       설명 추가 (한국어)
+     ────────────────────────────────────────
+     File: AI_NATIVE_PRODUCT_TEAM.md
+     Change: line 36 자료 조사 도구 예시에 notion-to-md 링크 추가
+     ────────────────────────────────────────
+     File: CHANGELOG.md
+     Change: [1.4.0] 엔트리 추가 (전체 변경사항 포함)
+     ---
+     Phase 2: 3개 export 스킬 패턴 통일 (Task 3)
+
+     현재 불일치 사항
+     Aspect: Output dir env var
+     g-export: 없음
+     slack-to-md: 없음
+     notion-to-md: CLAUDE_CORCA_NOTION_TO_MD_OUTPUT_DIR
+     ────────────────────────────────────────
+     Aspect: Default dir
+     g-export: ./g-exports (script 하드코딩)
+     slack-to-md: slack-outputs/ (SKILL.md 하드코딩)
+     notion-to-md: ./notion-outputs
+     ────────────────────────────────────────
+     Aspect: Priority chain
+     g-export: CLI arg > default
+     slack-to-md: 없음
+     notion-to-md: CLI > env var > default
+     ────────────────────────────────────────
+     Aspect: Config section
+     g-export: 없음
+     slack-to-md: 없음
+     notion-to-md: 있음
+     통일 후
+
+     모든 스킬이 동일한 패턴을 따름:
+     - Env var: CLAUDE_CORCA_<SKILL>_OUTPUT_DIR
+     - Priority: CLI argument > env var > hardcoded default
+     - SKILL.md 구조: Description (triggers + URL patterns) → Usage →
+     Configuration (env var 테이블) → Prerequisites → Notes/Limitations →
+     References
+
+     수정할 파일 (5개)
+     File: plugins/g-export/skills/g-export/scripts/g-export.sh
+     Change: Line 20: OUTPUT_DIR="${3:-./g-exports}" →
+       OUTPUT_DIR="${3:-${CLAUDE_CORCA_G_EXPORT_OUTPUT_DIR:-./g-exports}}"
+     ────────────────────────────────────────
+     File: plugins/g-export/skills/g-export/SKILL.md
+     Change: Configuration 섹션 추가, heading에 (/g-export) 추가, 출력
+     디렉토리 설명
+        갱신
+     ────────────────────────────────────────
+     File: plugins/g-export/.claude-plugin/plugin.json
+     Change: version → 1.4.0
+     ────────────────────────────────────────
+     File: plugins/slack-to-md/skills/slack-to-md/SKILL.md
+     Change: Configuration 섹션 추가, 하드코딩된
+     {PROJECT_ROOT}/slack-outputs/를 env
+        var 기반 OUTPUT_DIR로 변경, heading에 (/slack-to-md) 추가
+     ────────────────────────────────────────
+     File: plugins/slack-to-md/.claude-plugin/plugin.json
+     Change: version → 1.4.0
+     참고: notion-to-md의 SKILL.md는 Phase 1에서 생성 시 이미 통일된 패턴
+     적용. description frontmatter에 URL 패턴 추가.
+
+     ---
+     Phase 3: 통합 url-export 스킬 계획 문서 (Task 4)
+
+     새로 만들 파일 (1개)
+     File: requirements/url-export.md
+     Description: 통합 URL export 스킬 요구사항/계획 문서 (English)
+     계획 문서 핵심 내용
+
+     - 스킬 이름: url-export (/url-export <url>)
+     - 목적: 하나의 /url-export <url> 명령으로 URL 타입을 자동 감지하여
+     적절한 converter에 위임
+     - URL 감지 규칙: Google Docs → g-export, Slack → slack-to-md, Notion →
+     notion-to-md, 기타 → WebFetch fallback
+     - 아키텍처 권장안: SKILL.md-only orchestration — 스크립트 없이
+     SKILL.md에 감지/위임 규칙만 포함. 기존 3개 스킬에 위임. 코드 중복 없음.
+     - env var 체계: 통합 CLAUDE_CORCA_URL_EXPORT_OUTPUT_DIR + 서비스별
+     override
+     - 확장성: 새 서비스 추가 시 개별 export 플러그인 생성 + 통합 스킬 감지
+     테이블에 추가
+
+     ---
+     File Change Summary
+
+     생성 6개: notion-to-md plugin 4파일 + docs/skills-guide.md +
+     requirements/url-export.md
+     수정 9개: g-export 3파일 + slack-to-md 2파일 + marketplace.json +
+     README.md + AI_NATIVE_PRODUCT_TEAM.md + CHANGELOG.md
+
+     ---
+     Verification
+
+     1. plugins/notion-to-md/ 디렉토리 구조가 g-export/slack-to-md와 동일한
+     패턴인지 확인
+     2. 3개 export 스킬의 SKILL.md에 모두 Configuration 섹션 + env var
+     테이블이 있는지 확인
+     3. g-export.sh에서 env var fallback이 bash 문법상 올바른지 확인:
+     ${3:-${CLAUDE_CORCA_G_EXPORT_OUTPUT_DIR:-./g-exports}}
+     4. marketplace.json에 notion-to-md 항목이 추가되고 version이 1.4.0인지
+     확인
+     5. README.md에 notion-to-md 섹션이 기존 스킬 섹션과 동일한
+     형식(한국어)인지 확인
+
+
+
+
+
+
+⏺ Let me start implementing. I'll create tasks and work through them
+  systematically.
+
+⏺ Starting with Task 1: Creating the notion-to-md plugin. Let me create the
+  directory structure and files.
+
+⏺ Bash(mkdir -p
+      /Users/ted/codes/corca/claude-plugins/plugins/notion-to-md/.claude-plugin
+      /Users/ted/codes/corca/claude-plugins/plugins/notion-to-md/skills/notion-t
+      o-m…)
+  ⎿  (No content)
+
+⏺ Write(plugins/notion-to-md/.claude-plugin/plugin.json)
+  ⎿  Wrote 11 lines to plugins/notion-to-md/.claude-plugin/plugin.json
+       1 {
+       2   "name": "notion-to-md",
+       3   "description": "A skill that converts public Notion pages to l
+         ocal Markdown files",
+       4   "version": "1.4.0",
+       5   "author": {
+       6     "name": "Corca",
+       7     "url": "https://www.corca.ai/"
+       8   },
+       9   "repository": "https://github.com/corca-ai/claude-plugins"
+      10 }
+     … +1 line (ctrl+o to expand)
+
+⏺ Write(plugins/notion-to-md/skills/notion-to-md/SKILL.md)
+  ⎿  Wrote 69 lines to plugins/notion-to-md/skills/notion-to-md/SKILL.md
+       1 ---
+       2 name: notion-to-md
+       3 description: |
+       4   Convert public Notion pages to local Markdown files.
+       5   No auth or external dependencies required (Python 3.7+ stdlib 
+         only).
+       6   Trigger on "/notion-to-md" command or when user provides Notio
+         n URLs
+       7   (https://*.notion.site/*, https://www.notion.so/*).
+       8 allowed-tools:
+       9   - Bash
+      10 ---
+     … +59 lines (ctrl+o to expand)
+
+⏺ Bash(cp
+      /Users/ted/codes/works/.claude/skills/notion-to-md/scripts/notion-to-md.py
+       /Users/ted/codes/corca/claude-plugins/plugins/notion-to-md/skills/notion-
+      to-md/scr…)
+  ⎿  (No content)
+
+⏺ Bash(cp /Users/ted/codes/works/.claude/skills/notion-to-md/references/supporte
+      d-blocks.md /Users/ted/codes/corca/claude-plugins/plugins/notion-to-md/ski
+      lls/notion-to…)
+  ⎿  (No content)
+
+⏺ Now Task 2: Copy skills-guide.md with adaptation.
+
+⏺ Write(docs/skills-guide.md)
+  ⎿  Wrote 68 lines to docs/skills-guide.md
+       1 # Skills Guide
+       2 
+       3 ## Skill Structure
+       4 
+       5 ```
+       6 .claude/skills/{skill-name}/
+       7 ├── SKILL.md              # Required. Core instructions only (<5
+         00 lines)
+       8 ├── references/           # Optional. Detailed docs
+       9 │   └── *.md
+      10 └── scripts/              # Optional. Executable utilities
+     … +58 lines (ctrl+o to expand)
+
+⏺ Task 3: Unify g-export pattern. Modify the script and SKILL.md.
+
+⏺ Update(plugins/g-export/skills/g-export/scripts/g-export.sh)
+  ⎿  Added 1 line, removed 1 line
+      17  
+      18  URL="$1"
+      19  FORMAT="$2"
+      20 -OUTPUT_DIR="${3:-./g-exports}"                                 
+      20 +OUTPUT_DIR="${3:-${CLAUDE_CORCA_G_EXPORT_OUTPUT_DIR:-./g-export
+         +s}}"                                                           
+      21  
+      22  # Extract document type and ID from URL
+      23  if [[ "$URL" =~ docs\.google\.com/(presentation|document|spread
+          sheets)/d/([^/]+) ]]; then
+
+⏺ Write(plugins/g-export/skills/g-export/SKILL.md)
+  ⎿  Added 19 lines, removed 3 lines
+      13    - When a reference file contains Google Docs/Sheets/Slides UR
+          Ls that you need to fetch
+      14  ---
+      15  
+      16 -# Google Export                                                
+      16 +# Google Export (/g-export)                                    
+      17  
+      18 -Download public Google documents to `./g-exports/`.            
+      18 +Download public Google documents to local files.               
+      19  
+      20  ## Usage
+      21  
+     ...
+      23  {SKILL_DIR}/scripts/g-export.sh <url> [format] [output-dir]
+      24  ```
+      25  
+      26 +## Configuration                                               
+      27 +                                                               
+      28 +| Variable | Default | Description |                           
+      29 +|----------|---------|-------------|                           
+      30 +| `CLAUDE_CORCA_G_EXPORT_OUTPUT_DIR` | `./g-exports` | Default 
+         +output directory (when no output-dir argument given) |         
+      31 +                                                               
+      32 +```bash                                                        
+      33 +# ~/.zshrc or ~/.bashrc                                        
+      34 +export CLAUDE_CORCA_G_EXPORT_OUTPUT_DIR="./docs/google"        
+      35 +```                                                            
+      36 +                                                               
+      37 +**Priority**: CLI argument > `CLAUDE_CORCA_G_EXPORT_OUTPUT_DIR`
+         + env var > `./g-exports`                                       
+      38 +                                                               
+      39  ## Formats
+      40  
+      41  | Type | Formats | Default |
+     ...
+      44  | Docs | docx, odt, pdf, txt, epub, html, md | md |
+      45  | Sheets | xlsx, ods, pdf, csv, tsv, toon | toon |
+      46  
+      47 +## Prerequisites                                               
+      48 +                                                               
+      49 +- Only public documents work (Share > Publish to web)          
+      50 +                                                               
+      51  ## Notes
+      52  
+      36 -- Only public documents work                                   
+      53  - Uses original document title as filename
+      54  - Sheets csv/tsv/toon: exports first sheet by default; gid para
+          meter in URL (e.g., `?gid=123`) is auto-detected for specific s
+          heets
+      55  - md exports: base64 images removed; use `docx` or `pdf` for im
+          age-heavy documents
+
+⏺ Update(plugins/g-export/.claude-plugin/plugin.json)
+  ⎿  Added 1 line, removed 1 line
+      1  {
+      2    "name": "g-export",
+      3    "description": "A skill that downloads public Google Slides, D
+         ocs, and Sheets to local files",
+      4 -  "version": "1.3.0",                                           
+      4 +  "version": "1.4.0",                                           
+      5    "author": {
+      6      "name": "Corca",
+      7      "url": "https://www.corca.ai/"
+
+⏺ Task 4: Unify slack-to-md pattern.
+
+⏺ Write(plugins/slack-to-md/skills/slack-to-md/SKILL.md)
+  ⎿  Added 35 lines, removed 9 lines
+       1  ---
+       2  name: slack-to-md
+       3 -description: Convert Slack thread URLs to markdown documents. T
+         -rigger on "slack-to-md" command or when user provides Slack URL
+         -s (https://*.slack.com/archives/*/p*). Also handles updating ex
+         -isting markdown files from their source Slack threads.         
+       3 +description: |                                                 
+       4 +  Convert Slack thread URLs to markdown documents.             
+       5 +  Trigger on "slack-to-md" command or when user provides Slack 
+         +URLs                                                           
+       6 +  (https://*.slack.com/archives/*/p*). Also handles updating ex
+         +isting                                                         
+       7 +  markdown files from their source Slack threads.              
+       8  ---
+       9  
+       6 -# Slack to Markdown Converter                                  
+      10 +# Slack to Markdown Converter (/slack-to-md)                   
+      11  
+      12  Convert Slack thread URLs to well-formatted markdown documents.
+      13  
+      14 +## Configuration                                               
+      15 +                                                               
+      16 +| Variable | Default | Description |                           
+      17 +|----------|---------|-------------|                           
+      18 +| `CLAUDE_CORCA_SLACK_TO_MD_OUTPUT_DIR` | `./slack-outputs` | D
+         +efault output directory for generated markdown files and attach
+         +ments |                                                        
+      19 +                                                               
+      20 +```bash                                                        
+      21 +# ~/.zshrc or ~/.bashrc                                        
+      22 +export CLAUDE_CORCA_SLACK_TO_MD_OUTPUT_DIR="./docs/slack"      
+      23 +```                                                            
+      24 +                                                               
+      25 +**Priority**: CLI output path > `CLAUDE_CORCA_SLACK_TO_MD_OUTPU
+         +T_DIR` env var > `./slack-outputs`                             
+      26 +                                                               
+      27  ## Prerequisites
+      28  
+      29  Before using this skill, the following setup is required:
+     ...
+      41  
+      42  ## Workflow
+      43  
+      27 -### 1. Parse Input                                             
+      44 +### 1. Determine Output Directory                              
+      45  
+      46 +Resolve `OUTPUT_DIR` using the priority chain:                 
+      47 +1. If the user specifies an output path → use that directory   
+      48 +2. Otherwise check `CLAUDE_CORCA_SLACK_TO_MD_OUTPUT_DIR` env va
+         +r                                                              
+      49 +3. Fall back to `{PROJECT_ROOT}/slack-outputs/`                
+      50 +                                                               
+      51 +Use the resolved `OUTPUT_DIR` in all commands below.           
+      52 +                                                               
+      53 +### 2. Parse Input                                             
+      54 +                                                               
+      55  **Slack URL format:** `https://{workspace}.slack.com/archives/{
+          channel_id}/p{timestamp}`
+      56  
+      57  Extract:
+     ...
+      61  
+      62  **Existing .md file**: Read and extract Slack URL from `> Sourc
+          e:` line.
+      63  
+      38 -### 2. Execute Conversion                                      
+      64 +### 3. Execute Conversion                                      
+      65  
+      66  Run the two scripts in a pipe:
+      67  
+      68  ```bash
+      43 -node {SKILL_DIR}/scripts/slack-api.mjs <channel_id> <thread_ts>
+         - --attachments-dir {PROJECT_ROOT}/slack-outputs/attachments | \
+      44 -  {SKILL_DIR}/scripts/slack-to-md.sh <channel_id> <thread_ts> <
+         -workspace> {PROJECT_ROOT}/slack-outputs/<output_file>.md [title
+         -]                                                              
+      69 +node {SKILL_DIR}/scripts/slack-api.mjs <channel_id> <thread_ts>
+         + --attachments-dir OUTPUT_DIR/attachments | \                  
+      70 +  {SKILL_DIR}/scripts/slack-to-md.sh <channel_id> <thread_ts> <
+         +workspace> OUTPUT_DIR/<output_file>.md [title]                 
+      71  ```
+      72  
+      73  - `{SKILL_DIR}`: Shown at the top when skill is invoked as "Bas
+          e directory for this skill: ..."
+     ...
+      75  - `slack-api.mjs`: Fetches thread data from Slack API, outputs 
+          JSON. With `--attachments-dir`, also downloads file attachments
+           to the specified directory.
+      76  - `slack-to-md.sh`: Reads JSON from stdin, generates markdown f
+          ile. If files have `local_path`, renders them as links (images 
+          inline, others as download links).
+      77  
+      52 -### 3. Rename to Meaningful Filename                           
+      78 +### 4. Rename to Meaningful Filename                           
+      79  
+      80  After fetching, read the generated markdown file and extract th
+          e first message content. Then rename the file to a meaningful n
+          ame:
+      81  
+     ...
+      86     - Replace spaces with hyphens
+      87     - Remove special characters (keep only alphanumeric, hyphens
+          , Korean characters)
+      88     - Truncate to reasonable length (max 50 chars)
+      63 -4. Rename the file: `mv {old_file}.md {PROJECT_ROOT}/slack-outp
+         -uts/{sanitized_title}.md`                                      
+      89 +4. Rename the file: `mv {old_file}.md OUTPUT_DIR/{sanitized_tit
+         +le}.md`                                                        
+      90  5. Report the new filename to the user
+      91  
+      66 -### 4. Handle Errors                                           
+      92 +### 5. Handle Errors                                           
+      93  
+      94  The `slack-api.mjs` script automatically handles common errors:
+      95  - `not_in_channel`: Automatically joins the channel and retries
+
+⏺ Update(plugins/slack-to-md/.claude-plugin/plugin.json)
+  ⎿  Added 1 line, removed 1 line
+      1  {
+      2    "name": "slack-to-md",
+      3    "description": "A skill that converts Slack threads into Markd
+         own",
+      4 -  "version": "1.3.0",                                           
+      4 +  "version": "1.4.0",                                           
+      5    "author": {
+      6      "name": "Corca",
+      7      "url": "https://www.corca.ai/"
+
+⏺ Task 5: Create the url-export plan document.
+
+⏺ Write(requirements/url-export.md)
+  ⎿  Wrote 117 lines to requirements/url-export.md
+       1 # url-export: Unified URL Export Skill
+       2 
+       3 ## Overview
+       4 
+       5 A single skill that detects the type of external URL provided by
+          the user and delegates to the appropriate converter. This elimi
+         nates the need for users to remember which skill to invoke for w
+         hich URL type.
+       6 
+       7 ## Motivation
+       8 
+       9 The corca-plugins marketplace currently has three separate expor
+         t skills:
+      10 - **g-export**: Google Docs/Slides/Sheets → local files
+     … +107 lines (ctrl+o to expand)
+
+⏺ Task 6: Update cross-cutting documentation. Let me update all four files.
+
+⏺ Read 1 file (ctrl+o to expand)
+
+⏺ Update(.claude-plugin/marketplace.json)
+  ⎿  Added 1 line, removed 1 line
+       6    },
+       7    "metadata": {
+       8      "description": "A collection of Claude Code plugins for AI-
+          Native Product Teams",
+       9 -    "version": "1.3.0"                                         
+       9 +    "version": "1.4.0"                                         
+      10    },
+      11    "plugins": [
+      12      {
+
+⏺ Update(.claude-plugin/marketplace.json)
+  ⎿  Added 6 lines
+      44        "source": "./plugins/interview",
+      45        "description": "A skill that conducts structured intervie
+          ws to extract requirements, constraints, and design decisions",
+      46        "keywords": ["interview", "requirements", "discovery", "s
+          pecification"]
+      47 +    },                                                         
+      48 +    {                                                          
+      49 +      "name": "notion-to-md",                                  
+      50 +      "source": "./plugins/notion-to-md",                      
+      51 +      "description": "A skill that converts public Notion pages
+         + to local Markdown files",                                     
+      52 +      "keywords": ["notion", "markdown", "export", "documentati
+         +on"]                                                           
+      53      }
+      54    ]
+      55  }
+
+⏺ Now update README.md with notion-to-md section.
+
+⏺ Update(README.md)
+  ⎿  Added 1 line
+      37  | [interview](#interview) | Skill | 구조화된 인터뷰로 요구사항 
+          추출 |
+      38  | [g-export](#g-export) | Skill | Google 문서를 로컬 파일로 다
+          운로드 |
+      39  | [slack-to-md](#slack-to-md) | Skill | Slack 메시지를 마크다운
+          으로 변환 |
+      40 +| [notion-to-md](#notion-to-md) | Skill | 공개 Notion 페이지를 
+         +마크다운으로 변환 |                                            
+      41  | [suggest-tidyings](#suggest-tidyings) | Skill | 안전한 리팩토
+          링 기회 제안 |
+      42  | [attention-hook](#attention-hook) | Hook | 대기 상태일 때 Sla
+          ck 알림 |
+      43  
+
+⏺ Now add the notion-to-md section after the g-export section (which ends around
+   the TOON image and before slack-to-md).
+
+⏺ Read 1 file (ctrl+o to expand)
+
+⏺ Update(README.md)
+  ⎿  Added 37 lines
+      136  
+      137  <img src="assets/g-export-sheet-md-example.png" alt="Sheet → T
+           OON → Markdown" width="400">
+      138  
+      139 +### [notion-to-md](plugins/notion-to-md/skills/notion-to-md/SK
+          +ILL.md)                                                       
+      140 +                                                              
+      141 +**설치**:                                                     
+      142 +```bash                                                       
+      143 +claude plugin marketplace add https://github.com/corca-ai/clau
+          +de-plugins.git                                                
+      144 +claude plugin install notion-to-md@corca-plugins              
+      145 +```                                                           
+      146 +                                                              
+      147 +**갱신**:                                                     
+      148 +```bash                                                       
+      149 +claude plugin marketplace update corca-plugins                
+      150 +claude plugin update notion-to-md@corca-plugins               
+      151 +```                                                           
+      152 +                                                              
+      153 +공개된 Notion 페이지를 로컬 마크다운 파일로 변환하는 스킬입니 
+          +다. Notion의 비공개 v3 API를 사용하며, Python 3.7+ 표준 라이브
+          +러리만 필요합니다 (pip 패키지나 API 키 불필요).               
+      154 +                                                              
+      155 +**사용법**:                                                   
+      156 +- 명시적 호출: `/notion-to-md <url>`                          
+      157 +- URL 감지: Notion 페이지 URL을 에이전트가 발견하면 자동으로  
+          +변환 제안                                                     
+      158 +                                                              
+      159 +**지원 URL 형식**:                                            
+      160 +- `https://workspace.notion.site/Title-{32hex}`               
+      161 +- `https://www.notion.so/Title-{32hex}`                       
+      162 +- `https://www.notion.so/{32hex}`                             
+      163 +                                                              
+      164 +**저장 위치**: `./notion-outputs/` 폴더 (환경변수 `CLAUDE_CORC
+          +A_NOTION_TO_MD_OUTPUT_DIR`로 변경 가능)                       
+      165 +                                                              
+      166 +**필수 조건**:                                                
+      167 +- Notion 페이지가 웹에 공개(Share → Publish)되어 있어야 함    
+      168 +- Python 3.7+                                                 
+      169 +                                                              
+      170 +**주의사항**:                                                 
+      171 +- 하위 페이지: `<!-- missing block -->` 으로 표시됨           
+      172 +- 이미지: URL 참조만 포함 (Notion S3 URL은 만료됨)            
+      173 +- 데이터베이스 뷰(`collection_view`): 미지원                  
+      174 +- 비공식 Notion v3 API에 의존                                 
+      175 +                                                              
+      176  ### [slack-to-md](plugins/slack-to-md/skills/slack-to-md/SKILL
+           .md)
+      177  
+      178  **설치**:
+
+⏺ Now update AI_NATIVE_PRODUCT_TEAM.md to add notion-to-md link.
+
+⏺ Update(AI_NATIVE_PRODUCT_TEAM.md)
+  ⎿  Added 1 line, removed 1 line
+      33  
+      34  **자료 조사 → 스펙 작성 → 스펙 정교화 → 스펙 리뷰 → 구현 지시 →
+           회고 → 코드 리뷰** 싸이클이 정착된다.
+      35  
+      36 -1. **자료 조사**: 스펙을 작성하기 위해 필요한 회사 내부/외부의 
+         -정보들이 이미 LLM이 읽기 좋은 형태로 준비되어 있거나, 정보를 취
+         -합하는 도구들(MCP, 스크립트, 커스텀 프롬프트 등. 예: [slack-to-
+         -md skill](./plugins/slack-to-md), [g-export skill](./plugins/g-
+         -export))이 준비되어 있다. 이러한 기초 자료들을 리서치 에이전트 
+         -에게 제공해 보고서를 받는다.                                   
+      36 +1. **자료 조사**: 스펙을 작성하기 위해 필요한 회사 내부/외부의 
+         +정보들이 이미 LLM이 읽기 좋은 형태로 준비되어 있거나, 정보를 취
+         +합하는 도구들(MCP, 스크립트, 커스텀 프롬프트 등. 예: [slack-to-
+         +md skill](./plugins/slack-to-md), [g-export skill](./plugins/g-
+         +export), [notion-to-md skill](./plugins/notion-to-md))이 준비되
+         +어 있다. 이러한 기초 자료들을 리서치 에이전트에게 제공해 보고서
+         +를 받는다.                                                     
+      37  
+      38  2. **스펙 작성**: 보고서를 가공한 스펙을 Jira 티켓/Github 이슈 
+          등에 (가능하면 짝 작업으로) 작성한다.
+      39  
+
+⏺ Now update CHANGELOG.md.
+
+⏺ Update(CHANGELOG.md)
+  ⎿  Added 12 lines
+       5  The format is based on [Keep a Changelog](https://keepachangelo
+          g.com/en/1.1.0/),
+       6  and this project adheres to [Semantic Versioning](https://semve
+          r.org/spec/v2.0.0.html).
+       7  
+       8 +## [1.4.0] - 2026-01-30                                        
+       9 +                                                               
+      10 +### Added                                                      
+      11 +- Skills: `notion-to-md` - Converts public Notion pages to loca
+         +l Markdown files via Notion's v3 API (Python 3.7+ stdlib only) 
+      12 +- Docs: `docs/skills-guide.md` - Reference document for skill s
+         +tructure, env var naming conventions, and design principles    
+      13 +- Requirements: `requirements/url-export.md` - Plan document fo
+         +r unified URL export skill (`url-export`)                      
+      14 +                                                               
+      15 +### Changed                                                    
+      16 +- Skills: `g-export` - Added `CLAUDE_CORCA_G_EXPORT_OUTPUT_DIR`
+         + env var for configurable output directory                     
+      17 +- Skills: `slack-to-md` - Added `CLAUDE_CORCA_SLACK_TO_MD_OUTPU
+         +T_DIR` env var for configurable output directory               
+      18 +- Skills: Unified SKILL.md structure across all three export sk
+         +ills (g-export, slack-to-md, notion-to-md) with consistent Conf
+         +iguration section, env var table, and priority chain           
+      19 +                                                               
+      20  ## [1.1.0] - 2025-01-10
+      21  
+      22  ### Added
+
+⏺ All tasks complete. Let me verify the key results.
+
+⏺ Read 1 file (ctrl+o to expand)
+
+⏺ Bash(git diff --stat)
+  ⎿   .claude-plugin/marketplace.json                    |  8 +++-
+      AI_NATIVE_PRODUCT_TEAM.md                          |  2 +-
+      CHANGELOG.md                                       | 12 ++++++
+     … +9 lines (ctrl+o to expand)
+
+⏺ Bash(git status -u)
+  ⎿  On branch main
+     Your branch is ahead of 'origin/main' by 1 commit.
+       (use "git push" to publish your local commits)
+     … +24 lines (ctrl+o to expand)
+
+⏺ All changes are in place. Here's the summary:
+
+  Created 6 files:
+  - plugins/notion-to-md/ — Full plugin structure (plugin.json, SKILL.md,
+  notion-to-md.py, supported-blocks.md)
+  - docs/skills-guide.md — Skill structure and env var naming conventions guide
+  - requirements/url-export.md — Plan document for unified url-export skill
+
+  Modified 9 files:
+  - g-export: Added CLAUDE_CORCA_G_EXPORT_OUTPUT_DIR env var to script (line 20)
+   and Configuration section to SKILL.md
+  - slack-to-md: Added CLAUDE_CORCA_SLACK_TO_MD_OUTPUT_DIR env var with
+  "Determine Output Directory" workflow step in SKILL.md
+  - marketplace.json: Added notion-to-md entry, bumped to v1.4.0
+  - README.md: Added notion-to-md to plugin table and full section (Korean)
+  - AI_NATIVE_PRODUCT_TEAM.md: Added notion-to-md link in research tools example
+  - CHANGELOG.md: Added [1.4.0] entry covering all changes
+  - Both plugin.json files bumped to v1.4.0
+
+  3개 export 스킬 통일 패턴:
+  - 모두 CLAUDE_CORCA_<SKILL>_OUTPUT_DIR env var 지원
+  - 모두 CLI argument > env var > hardcoded default 우선순위
+  - 모두 SKILL.md에 Configuration 섹션 + env var 테이블 포함
+  - 모두 heading에 (/command-name) 접미사
+
+✻ Churned for 11m 25s
+
+❯ 감사합니다. skills-guide 를 현재 claude.md 에 링크 걸어야 합니다.         
+  기존에도 뭘 할 때는 뭘 해라 같은 문서가 있었는데 이것들과도 적절히        
+  통합해야겠습니다.                                                         
+
+⏺ Read 4 files (ctrl+o to expand)
+
+⏺ The three docs are complementary and cover different aspects, so adding the
+  link is straightforward.
+
+⏺ Update(CLAUDE.md)
+  ⎿  Added 1 line
+       5  2. For plugin work, also read:
+       6     - [Modifying/Testing/Deploying Plugins](docs/modifying-plugi
+          n.md)
+       7     - [Adding New Plugins](docs/adding-plugin.md)
+       8 +   - [Skills Guide](docs/skills-guide.md) — skill structure, en
+         +v var conventions, design principles                           
+       9  
+      10  Do NOT proceed with code changes until completing the above ste
+          ps.
+      11  
+
+⏺ Done. CLAUDE.md now links to all three docs. Each covers a distinct aspect:
+
+  - modifying-plugin.md — workflow (modify → test → apply → deploy)
+  - adding-plugin.md — plugin structure (plugin.json, scripts, AI_NATIVE links)
+  - skills-guide.md — skill content (SKILL.md structure, env vars, design
+  principles)
+
+  The docs are complementary and don't overlap, so no further integration was
+  needed.
+
+❯ /export 
+  ⎿  Export cancelled
