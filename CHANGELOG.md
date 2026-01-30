@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0] - 2026-01-30
+
+### Changed
+- Skills: `retro` (1.3.0) — Section 2 right-placement check: suggest updating referenced documents instead of CLAUDE.md when the learning belongs there; Section 6 post-retro release procedure reminder
+- Hooks: `plan-and-lessons` (1.1.0) — Protocol Timing section: lessons.md must be created at the same time as plan.md
+
+### Removed
+- Skills: `g-export`, `slack-to-md`, `notion-to-md` — functionality is now bundled in `gather-context`. Install `gather-context` instead.
+
 ## [1.7.0] - 2026-01-30
 
 ### Added

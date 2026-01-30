@@ -57,6 +57,7 @@ User, organization, and project facts that future sessions would benefit from:
 
 - Work style and communication observations; compare against current CLAUDE.md
 - If warranted, draft `### Suggested CLAUDE.md Updates` as a bullet list (omit if none)
+- **Right-placement check**: Before suggesting a CLAUDE.md change, check if the learning belongs to a document that CLAUDE.md already references (e.g., protocol.md, skills-guide.md). If so, suggest updating that document instead — CLAUDE.md should stay as a concise pointer, not restate referenced content.
 
 #### Section 3: Prompting Habits
 
@@ -100,6 +101,7 @@ During any post-retro conversation:
 - Update `retro.md` — append learnings under `### Post-Retro Findings` in Section 2
 - Update `lessons.md` — add new learnings from the discussion
 - If any learning should be persistent beyond the session (protocol docs, CLAUDE.md, etc.), apply it to the appropriate file
+- If plugin code was changed (SKILL.md, scripts, hooks, protocol docs), follow normal release procedures: update `plugin.json` version and `CHANGELOG.md`
 
 Do not prompt the user to start this discussion. Simply stay aware that conversation after the retro may produce learnings worth capturing.
 

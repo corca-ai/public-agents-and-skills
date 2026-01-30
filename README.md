@@ -35,9 +35,6 @@ claude plugin update <plugin-name>@corca-plugins   # 기존 플러그인 업데�
 |---------|------|------|
 | [clarify](#clarify) | Skill | 모호한 요구사항을 명확하게 정리 |
 | [interview](#interview) | Skill | 구조화된 인터뷰로 요구사항 추출 |
-| [g-export](#g-export) | Skill | Google 문서를 로컬 파일로 다운로드 |
-| [slack-to-md](#slack-to-md) | Skill | Slack 메시지를 마크다운으로 변환 |
-| [notion-to-md](#notion-to-md) | Skill | 공개 Notion 페이지를 마크다운으로 변환 |
 | [suggest-tidyings](#suggest-tidyings) | Skill | 안전한 리팩토링 기회 제안 |
 | [retro](#retro) | Skill | 세션 종료 시 포괄적 회고 수행 |
 | [gather-context](#gather-context) | Skill | URL 자동 감지 후 외부 콘텐츠를 자체 스크립트로 수집 |
@@ -101,116 +98,6 @@ claude plugin update interview@corca-plugins
 - `SCRATCHPAD.md` - 인터뷰 중 실시간 메모
 - `SYNTHESIS.md` - 정리된 요구사항 종합 문서
 - `JUST_IN_CASE.md` - 미래 에이전트를 위한 추가 맥락 (선택)
-
-### [g-export](plugins/g-export/skills/g-export/SKILL.md)
-
-**설치**:
-```bash
-claude plugin marketplace add https://github.com/corca-ai/claude-plugins.git
-claude plugin install g-export@corca-plugins
-```
-
-**갱신**:
-```bash
-claude plugin marketplace update corca-plugins
-claude plugin update g-export@corca-plugins
-```
-
-공개된 Google 문서(Slides, Docs, Sheets)를 로컬 파일로 다운로드하는 스킬입니다. ([작업 배경 블로그 글](https://www.stdy.blog/1p1w-02-g-export/))
-
-**사용법**:
-- 명시적 호출: `/g-export`
-- URL 감지: Google 문서 URL을 에이전트가 발견하면 자동으로 다운로드 제안
-
-**지원 포맷**:
-- **Google Slides**: pptx, odp, pdf, txt (기본: txt)
-- **Google Docs**: docx, odt, pdf, txt, epub, html, md (기본: md)
-- **Google Sheets**: xlsx, ods, pdf, csv, tsv, toon (기본: toon)
-
-g-export는 LLM이 문서 내용을 쉽게 파악할 수 있도록 텍스트 기반 포맷을 기본으로 선택합니다. Sheets는 CSV 대신 [TOON](https://github.com/toon-format/toon)을 기본으로 사용하여 LLM 호환성을 높입니다. 설문/세션 형식의 TOON 데이터는 에이전트가 마크다운으로 변환하여 가독성을 높일 수 있습니다.
-
-**저장 위치**: `./g-exports/` 폴더 (원본 문서 제목을 파일명으로 사용)
-
-**주의사항**:
-- Sheets의 csv/tsv/toon은 기본적으로 첫 번째 시트만 다운로드 (다른 시트는 `gid` 파라미터 필요)
-- md 포맷은 base64 이미지가 자동 제거됨 (이미지가 중요하면 `docx`나 `pdf` 사용)
-- TOON 변환 가이드: [references/TOON.md](plugins/g-export/skills/g-export/references/TOON.md)
-
-**추출 예시(Sheet → TOON → Markdown)**:
-
-<img src="assets/g-export-sheet-md-example.png" alt="Sheet → TOON → Markdown" width="400">
-
-### [notion-to-md](plugins/notion-to-md/skills/notion-to-md/SKILL.md)
-
-**설치**:
-```bash
-claude plugin marketplace add https://github.com/corca-ai/claude-plugins.git
-claude plugin install notion-to-md@corca-plugins
-```
-
-**갱신**:
-```bash
-claude plugin marketplace update corca-plugins
-claude plugin update notion-to-md@corca-plugins
-```
-
-공개된 Notion 페이지를 로컬 마크다운 파일로 변환하는 스킬입니다. Notion의 비공개 v3 API를 사용하며, Python 3.7+ 표준 라이브러리만 필요합니다 (pip 패키지나 API 키 불필요).
-
-**사용법**:
-- 명시적 호출: `/notion-to-md <url>`
-- URL 감지: Notion 페이지 URL을 에이전트가 발견하면 자동으로 변환 제안
-
-**지원 URL 형식**:
-- `https://workspace.notion.site/Title-{32hex}`
-- `https://www.notion.so/Title-{32hex}`
-- `https://www.notion.so/{32hex}`
-
-**저장 위치**: `./notion-outputs/` 폴더 (환경변수 `CLAUDE_CORCA_NOTION_TO_MD_OUTPUT_DIR`로 변경 가능)
-
-**필수 조건**:
-- Notion 페이지가 웹에 공개(Share → Publish)되어 있어야 함
-- Python 3.7+
-
-**주의사항**:
-- 하위 페이지: `<!-- missing block -->` 으로 표시됨
-- 이미지: URL 참조만 포함 (Notion S3 URL은 만료됨)
-- 데이터베이스 뷰(`collection_view`): 미지원
-- 비공식 Notion v3 API에 의존
-
-### [slack-to-md](plugins/slack-to-md/skills/slack-to-md/SKILL.md)
-
-**설치**:
-```bash
-claude plugin marketplace add https://github.com/corca-ai/claude-plugins.git
-claude plugin install slack-to-md@corca-plugins
-```
-
-**갱신**:
-```bash
-claude plugin marketplace update corca-plugins
-claude plugin update slack-to-md@corca-plugins
-```
-
-1개 이상의 Slack 메시지 URL을 단일한 마크다운 문서로 변환하는 스킬입니다. ([작업 배경 블로그 글](https://www.stdy.blog/1p1w-01-slack-to-md/))
-
-**사용법**:
-- 링크를 이용해 기존 메시지 취합하기: `slack-to-md <slack-message-url1> <slack-message-url2> <...>`
-- 기존 문서 업데이트하기(예: 쓰레드에 새로 추가된 메시지를 기존 문서에 추가): `slack-to-md <path-to-file.md>`
-- 그 외: `slack-to-md #foo 채널과 #bar 채널에서 이러저러한 내용을 취합해줘`
-
-**주요 기능**:
-- Slack 스레드의 모든 메시지를 마크다운으로 변환. 봇은 필요시 자동으로 해당 채널에 join
-- 메시지에 첨부된 파일 자동 다운로드 (`slack-outputs/attachments/`에 저장)
-- 문서 생성을 위한 bash 스크립트를 이용해 토큰 절약
-- 첫 메시지 내용을 기반으로 의미있는 파일명 자동 생성
-- `slack-outputs/` 디렉토리에 저장
-
-**필수 조건**:
-- Node.js 18+ 필요
-- `jq` 설치 필요 (JSON 파싱용)
-- Slack Bot 설정 필요 ([생성 가이드](https://api.slack.com/apps)):
-  - OAuth scopes: `channels:history`, `channels:join`, `users:read`, `files:read`
-  - `~/.claude/.env`에 `SLACK_BOT_TOKEN=xoxb-...` 설정
 
 ### [suggest-tidyings](plugins/suggest-tidyings/skills/suggest-tidyings/SKILL.md)
 
@@ -306,7 +193,6 @@ URL 유형을 자동 감지하여 외부 콘텐츠를 로컬 파일로 수집하
 **저장 위치**: 통합 기본값 `./gathered/` (환경변수 `CLAUDE_CORCA_GATHER_CONTEXT_OUTPUT_DIR`로 변경 가능, 서비스별 환경변수로 개별 지정도 가능)
 
 **참고**:
-- 개별 스킬(`/g-export`, `/slack-to-md`, `/notion-to-md`)은 독립적으로 계속 사용 가능합니다.
 - 정보 검색이 필요한 경우 `/web-search` 사용을 제안합니다.
 
 ### [web-search](plugins/web-search/skills/web-search/SKILL.md)
@@ -421,6 +307,21 @@ Claude Code가 Plan 모드에 진입할 때(`EnterPlanMode` 도구 호출 시) P
 **주의사항**:
 - `/plan`이나 Shift+Tab으로 직접 plan 모드에 진입하는 경우에는 훅이 발동되지 않음 (CLI 모드 토글이라 도구 호출 없음)
 - 커버리지를 위해 CLAUDE.md에 프로토콜 참조를 병행 설정하는 것을 권장
+
+## 삭제된 스킬
+
+다음 스킬들은 v1.8.0에서 삭제되었습니다. 동일한 기능이 [gather-context](#gather-context)에 내장되어 있습니다.
+
+| 삭제된 스킬 | 대체 |
+|------------|------|
+| `g-export` | `gather-context` (Google Docs/Slides/Sheets 내장) |
+| `slack-to-md` | `gather-context` (Slack 스레드 변환 내장) |
+| `notion-to-md` | `gather-context` (Notion 페이지 변환 내장) |
+
+**마이그레이션**:
+```bash
+claude plugin install gather-context@corca-plugins
+```
 
 ## 라이선스
 

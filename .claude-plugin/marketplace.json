@@ -16,12 +16,6 @@
       "keywords": ["requirements", "specification", "clarification"]
     },
     {
-      "name": "slack-to-md",
-      "source": "./plugins/slack-to-md",
-      "description": "A skill that converts Slack threads into Markdown",
-      "keywords": ["slack", "markdown", "documentation"]
-    },
-    {
       "name": "suggest-tidyings",
       "source": "./plugins/suggest-tidyings",
       "description": "A skill that suggests safe refactoring opportunities based on Kent Beck's Tidy First? philosophy",
@@ -34,22 +28,10 @@
       "keywords": ["notification", "slack", "hook"]
     },
     {
-      "name": "g-export",
-      "source": "./plugins/g-export",
-      "description": "A skill that downloads public Google Slides, Docs, and Sheets to local files",
-      "keywords": ["google", "slides", "docs", "sheets", "export", "download"]
-    },
-    {
       "name": "interview",
       "source": "./plugins/interview",
       "description": "A skill that conducts structured interviews to extract requirements, constraints, and design decisions",
       "keywords": ["interview", "requirements", "discovery", "specification"]
-    },
-    {
-      "name": "notion-to-md",
-      "source": "./plugins/notion-to-md",
-      "description": "A skill that converts public Notion pages to local Markdown files",
-      "keywords": ["notion", "markdown", "export", "documentation"]
     },
     {
       "name": "retro",

@@ -75,7 +75,9 @@ Write lessons in the user's language.
 
 ### Timing
 
-Accumulate incrementally throughout the session — not just at the end. Record learnings as they emerge from conversation and implementation.
+Create lessons.md at the same time as plan.md — not after implementation. Learnings often emerge from pre-plan-mode conversation (e.g., corrected assumptions, revealed preferences), so the file must exist before implementation begins.
+
+Accumulate incrementally throughout the session. Record learnings as they emerge from conversation and implementation.
 
 ## Retro Document (optional)
 

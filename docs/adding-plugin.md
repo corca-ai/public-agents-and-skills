@@ -29,7 +29,7 @@ Use basic tools like bash and curl whenever possible. Minimize external dependen
 When adding a new plugin, review whether a link to that plugin can be added to `AI_NATIVE_PRODUCT_TEAM.md`.
 
 This document explains AI-native team workflows and links to relevant tools as examples:
-- Research tools (e.g., slack-to-md)
+- Research tools (e.g., gather-context)
 - Spec refinement tools (e.g., Clarify)
 - Code quality tools (e.g., suggest-tidyings)
 
