@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "A collection of Claude Code plugins for AI-Native Product Teams",
-    "version": "1.7.0"
+    "version": "1.8.0"
   },
   "plugins": [
     {
@@ -68,6 +68,12 @@
       "source": "./plugins/web-search",
       "description": "A skill that provides web search, code search, and URL content extraction via Tavily and Exa APIs",
       "keywords": ["search", "web-search", "tavily", "exa", "code-search", "extract"]
+    },
+    {
+      "name": "plan-and-lessons",
+      "source": "./plugins/plan-and-lessons",
+      "description": "A hook that injects the Plan & Lessons Protocol when entering plan mode",
+      "keywords": ["plan", "lessons", "protocol", "plan-mode", "hook"]
     }
   ]
 }

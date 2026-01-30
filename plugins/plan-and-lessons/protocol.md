@@ -81,4 +81,4 @@ Accumulate incrementally throughout the session — not just at the end. Record 
 
 `prompt-logs/{YYMMDD}-{title}/retro.md` — produced by the `/retro` skill at session end.
 
-While lessons are accumulated incrementally during a session, the retro is a comprehensive end-of-session review covering: user/org context, collaboration preferences, prompting feedback, learning resources, and skill discovery. See the [retro skill](../plugins/retro/skills/retro/SKILL.md) for details.
+While lessons are accumulated incrementally during a session, the retro is a comprehensive end-of-session review covering: user/org context, collaboration preferences, prompting feedback, learning resources, and skill discovery. See the `/retro` skill for details if available.

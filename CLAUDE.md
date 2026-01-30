@@ -14,12 +14,10 @@ Do NOT consider the task complete without updating related docs.
 
 ## Plan Mode
 
-When entering plan mode, follow the [Plan & Lessons Protocol](docs/plan-and-lessons.md).
+When entering plan mode, follow the [Plan & Lessons Protocol](plugins/plan-and-lessons/protocol.md).
 This is separate from the system plan file — create `prompt-logs/` directory with plan.md and lessons.md regardless of where the system stores its plan.
 
 For non-trivial implementation tasks (new plugins, multi-file changes, architectural decisions), proactively use `EnterPlanMode` even when the user does not explicitly request it.
-
-On entering plan mode, proactively read `.claude/settings.json` to check for registered hooks and follow their intent, regardless of whether the hook execution was observed.
 
 ## Collaboration Style
 

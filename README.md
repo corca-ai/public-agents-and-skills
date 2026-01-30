@@ -43,6 +43,7 @@ claude plugin update <plugin-name>@corca-plugins   # 기존 플러그인 업데�
 | [gather-context](#gather-context) | Skill | URL 자동 감지 후 외부 콘텐츠를 자체 스크립트로 수집 |
 | [web-search](#web-search) | Skill | 웹 검색, 코드 검색, URL 콘텐츠 추출 |
 | [attention-hook](#attention-hook) | Hook | 대기 상태일 때 Slack 알림 |
+| [plan-and-lessons](#plan-and-lessons) | Hook | Plan 모드 진입 시 Plan & Lessons Protocol 주입 |
 
 ## Skills
 
@@ -257,7 +258,7 @@ claude plugin marketplace update corca-plugins
 claude plugin update retro@corca-plugins
 ```
 
-세션 종료 시점에 포괄적인 회고를 수행하는 스킬입니다. [Plan & Lessons Protocol](docs/plan-and-lessons.md)의 `lessons.md`가 세션 중 점진적으로 쌓이는 학습 기록이라면, `retro`는 세션 전체를 조감하는 종합 회고입니다.
+세션 종료 시점에 포괄적인 회고를 수행하는 스킬입니다. [Plan & Lessons Protocol](plugins/plan-and-lessons/protocol.md)의 `lessons.md`가 세션 중 점진적으로 쌓이는 학습 기록이라면, `retro`는 세션 전체를 조감하는 종합 회고입니다.
 
 **사용법**:
 - 세션 종료 시: `/retro`
@@ -395,6 +396,31 @@ CLAUDE_ATTENTION_DELAY=30  # AskUserQuestion 알림 지연 시간 (초, 기본�
 <img src="assets/attention-hook-normal-response.png" alt="Slack 알림 예시 1 - 일반적인 응답" width="600">
 
 <img src="assets/attention-hook-AskUserQuestion.png" alt="Slack 알림 예시 2 - AskUserQuestion" width="600">
+
+### [plan-and-lessons](plugins/plan-and-lessons/hooks/hooks.json)
+
+**설치**:
+```bash
+claude plugin marketplace add https://github.com/corca-ai/claude-plugins.git
+claude plugin install plan-and-lessons@corca-plugins
+```
+
+**갱신**:
+```bash
+claude plugin marketplace update corca-plugins
+claude plugin update plan-and-lessons@corca-plugins
+```
+
+Claude Code가 Plan 모드에 진입할 때(`EnterPlanMode` 도구 호출 시) Plan & Lessons Protocol을 자동으로 주입하는 훅입니다. 프로토콜은 `prompt-logs/{YYMMDD}-{title}/` 디렉토리에 plan.md와 lessons.md를 생성하는 워크플로우를 정의합니다.
+
+**동작 방식**:
+- `PreToolUse` → `EnterPlanMode` 매처로 plan 모드 진입을 감지
+- `additionalContext`로 프로토콜 문서 경로를 주입
+- Claude가 프로토콜을 읽고 따름
+
+**주의사항**:
+- `/plan`이나 Shift+Tab으로 직접 plan 모드에 진입하는 경우에는 훅이 발동되지 않음 (CLI 모드 토글이라 도구 호출 없음)
+- 커버리지를 위해 CLAUDE.md에 프로토콜 참조를 병행 설정하는 것을 권장
 
 ## 라이선스
 
