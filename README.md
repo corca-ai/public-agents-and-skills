@@ -175,7 +175,7 @@ claude plugin marketplace update corca-plugins
 claude plugin update gather-context@corca-plugins
 ```
 
-URL 유형을 자동 감지하여 외부 콘텐츠를 로컬 파일로 수집하는 통합 스킬입니다. 변환 스크립트가 내장되어 있어 **별도의 스킬 설치 없이** 하나의 플러그인으로 Google Docs, Slack, Notion 콘텐츠를 모두 수집할 수 있습니다. `url-export`를 대체합니다.
+URL 유형을 자동 감지하여 외부 콘텐츠를 로컬 파일로 수집하는 통합 스킬입니다. 변환 스크립트가 내장되어 있어 **별도의 스킬 설치 없이** 하나의 플러그인으로 Google Docs, Slack, Notion 콘텐츠를 모두 수집할 수 있습니다. 기존의 `slack-to-md`, `g-export`, `notion-to-md`를 통합한 스킬입니다.
 
 **사용법**:
 - 명시적 호출: `/gather-context <url>`
