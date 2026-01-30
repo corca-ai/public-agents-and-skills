@@ -26,18 +26,9 @@ export CLAUDE_CORCA_SLACK_TO_MD_OUTPUT_DIR="./docs/slack"
 
 ## Prerequisites
 
-Before using this skill, the following setup is required:
-
-1. **Node.js 18+**: Required for the Slack API script
-2. **Set up Slack Bot**: Create a bot at https://api.slack.com/apps with these OAuth scopes:
-   - `channels:history` - Read messages from public channels
-   - `channels:join` - Auto-join channels when needed
-   - `users:read` - Resolve user IDs to names
-   - `files:read` - Download file attachments
-3. **Configure token**: Add your bot token to `~/.claude/.env`:
-   ```
-   SLACK_BOT_TOKEN=xoxb-your-token-here
-   ```
+1. **Node.js 18+**
+2. **Slack Bot** (https://api.slack.com/apps) with scopes: `channels:history`, `channels:join`, `users:read`, `files:read`
+3. **Token** in `~/.claude/.env`: `SLACK_BOT_TOKEN=xoxb-your-token-here`
 
 ## Workflow
 

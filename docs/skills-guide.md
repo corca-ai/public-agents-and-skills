@@ -13,7 +13,7 @@
 
 In this marketplace, skills are located within `plugins/{name}/skills/{name}/`.
 
-## Skill Modification Procedure
+## Skill Content Rules
 
 1. **Modify skill files in the plugin directory only**
 2. **Keep SKILL.md concise** - Move details to `references/`

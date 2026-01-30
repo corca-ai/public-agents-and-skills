@@ -117,23 +117,6 @@ Common types to probe:
 - Constraints: 24h session, bcrypt, rate limit 5 attempts
 - Success Criteria: User can register, login, logout, reset password
 
-### Example 2: Bug Report
-
-**Original**: "The export is broken"
-
-**Clarifying questions**:
-1. Which export? → CSV
-2. What happens? → Empty file
-3. When did it start? → After v2.1 update
-4. Steps to reproduce? → Export any report
-
-**Clarified**:
-- Goal: Fix CSV export producing empty files
-- Reason: Users need to export data for external reporting
-- Scope: CSV only, other formats work
-- Constraints: Regression from v2.1, must not break other exports
-- Success Criteria: CSV contains correct data matching UI
-
 ## Rules
 
 1. **No assumptions**: Ask, don't assume

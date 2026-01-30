@@ -55,21 +55,16 @@ User, organization, and project facts that future sessions would benefit from:
 
 #### Section 2: Collaboration Preferences
 
-- Work style observations (iteration speed, review depth, autonomy level)
-- Communication preferences (verbosity, language, formality)
-- Compare against current CLAUDE.md rules
-- If warranted, draft specific additions under `### Suggested CLAUDE.md Updates` as a bullet list of changes
-- If no changes warranted, omit the subsection
+- Work style and communication observations; compare against current CLAUDE.md
+- If warranted, draft `### Suggested CLAUDE.md Updates` as a bullet list (omit if none)
 
 #### Section 3: Prompting Habits
 
-- Patterns that led to misunderstandings or extra rounds
-- Specific examples from the session with improved alternatives
-- Frame constructively: "X worked; Y could work even better"
+Patterns that caused misunderstandings, with specific examples and improved alternatives. Frame constructively.
 
 #### Section 4: Learning Resources
 
-- Use WebSearch to find 2–5 relevant resources
+- web-search to find 2–5 relevant resources
 - Calibrate to user's apparent knowledge level
 - Focus on topics where the session revealed knowledge gaps or curiosity
 - Each resource: title, URL, and one-line reason for relevance
@@ -116,28 +111,11 @@ Do not prompt the user to start this discussion. Simply stay aware that conversa
 > Session date: {YYYY-MM-DD}
 
 ## 1. Context Worth Remembering
-
-{content}
-
 ## 2. Collaboration Preferences
-
-{content}
-
 ### Suggested CLAUDE.md Updates
-
-{bullet list of changes, or omit subsection if none}
-
 ## 3. Prompting Habits
-
-{content}
-
 ## 4. Learning Resources
-
-{content}
-
 ## 5. Relevant Skills
-
-{content}
 ```
 
 ## Language
