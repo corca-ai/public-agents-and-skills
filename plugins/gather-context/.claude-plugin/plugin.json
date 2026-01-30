@@ -1,0 +1,10 @@
+{
+  "name": "gather-context",
+  "description": "A skill that auto-detects URLs and gathers external content from Google Docs, Slack, Notion, and web pages",
+  "version": "1.0.0",
+  "author": {
+    "name": "Corca",
+    "url": "https://www.corca.ai/"
+  },
+  "repository": "https://github.com/corca-ai/claude-plugins"
+}
