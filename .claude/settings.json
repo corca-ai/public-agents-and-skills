@@ -5,8 +5,8 @@
         "matcher": "EnterPlanMode",
         "hooks": [
           {
-            "type": "prompt",
-            "prompt": "READ and FOLLOW the Plan & Lessons Protocol (docs/plan-and-lessons.md)."
+            "type": "command",
+            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"additionalContext\":\"READ and FOLLOW the Plan & Lessons Protocol (docs/plan-and-lessons.md).\"}}'"
           }
         ]
       }

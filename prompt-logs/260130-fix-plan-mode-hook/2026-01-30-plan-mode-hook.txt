@@ -1,0 +1,807 @@
+
+ ▐▛███▜▌   Claude Code v2.1.25
+▝▜█████▛▘  Opus 4.5 · Claude Max
+  ▘▘ ▝▝    ~/codes/corca/claude-plugins
+
+❯ plan mode 에 들어가면 현재 설정된 hook이 잘 작동하는지 테스트하고         
+  싶습니다.                                                                 
+
+⏺ Plan mode에서 hook이 잘 작동하는지 테스트하고 싶으시군요. 먼저 현재 설정된
+  hook 구성을 확인하겠습니다.
+
+⏺ Explore(Explore hook configuration)
+  ⎿  Done (23 tool uses · 32.5k tokens · 2m 16s)
+
+⏺ 현재 설정된 hook 구성을 모두 파악했습니다. 정리하면:
+
+  발견된 Hook 설정
+
+  1. 프로젝트 레벨 (.claude/settings.json):
+  - PreToolUse → EnterPlanMode 매처: Plan & Lessons Protocol을 따르라는 prompt
+  주입
+
+  2. attention-hook 플러그인 (plugins/attention-hook/hooks/hooks.json):
+  - Notification → idle_prompt: Slack 알림 전송
+  - PreToolUse → AskUserQuestion: 타이머 시작
+  - PostToolUse → AskUserQuestion: 타이머 취소
+
+  현재 이미 plan mode에 들어와 있으므로 EnterPlanMode hook이 발동했어야 합니다.
+  테스트 범위를 확인하고 싶습니다.
+
+⏺ User answered Claude's questions:
+  ⎿  · 어떤 hook을 테스트하고 싶으신가요? → EnterPlanMode hook만
+
+⏺ EnterPlanMode hook만 테스트하겠습니다. 현재 상태를 분석해보겠습니다.
+
+⏺ Read 1 file (ctrl+o to expand)
+
+⏺ 현재 상태를 분석했습니다. Plan 파일에 테스트 계획을 작성하겠습니다.
+
+⏺ Updated plan
+  ⎿  /plan to preview
+
+⏺ 계획을 작성했습니다. 핵심 내용을 요약하면:
+
+  현재 상황: .claude/settings.json에 PreToolUse → EnterPlanMode hook이 prompt
+  타입으로 설정되어 있습니다. 지금 이미 plan mode에 있으므로 hook이 발동했어야
+  합니다.
+
+  문제점: CLAUDE.md에도 Plan & Lessons Protocol을 따르라는 지시가 있어서, hook이
+   발동했는지 CLAUDE.md 때문인지 구분이 어렵습니다.
+
+  테스트 방법:
+  1. Hook prompt에 식별 가능한 마커(예: HOOK_TEST_MARKER)를 임시로 추가
+  2. Plan mode 진입 시 assistant가 해당 마커를 인식하는지 확인
+  3. Claude Code 터미널에 hook 실행 로그가 표시되는지 확인
+  4. 테스트 후 원래 prompt로 복원
+
+⏺ User approved Claude's plan
+  ⎿  Plan saved to: ~/.claude/plans/swift-nibbling-reddy.md · /plan to edit
+     Test EnterPlanMode Hook
+
+     Current Configuration
+
+     File: .claude/settings.json
+     {
+       "hooks": {
+         "PreToolUse": [{
+           "matcher": "EnterPlanMode",
+           "hooks": [{
+             "type": "prompt",
+             "prompt": "READ and FOLLOW the Plan & Lessons Protocol 
+     (docs/plan-and-lessons.md)."
+           }]
+         }]
+       }
+     }
+
+     What This Hook Should Do
+
+     When EnterPlanMode tool is called, inject the prompt text into the
+     assistant's context before the tool executes. This should cause the
+     assistant to follow the Plan & Lessons Protocol, which requires:
+     - Creating prompt-logs/{YYMMDD}-{title}/plan.md with Gherkin success
+     criteria
+     - Creating prompt-logs/{YYMMDD}-{title}/lessons.md incrementally
+
+     Test Plan
+
+     Step 1: Verify hook fires
+
+     - Exit plan mode, then re-enter using /plan or EnterPlanMode
+     - Observe the Claude Code terminal output — hook execution should be
+     visible in the UI (hook name + status)
+
+     Step 2: Verify prompt injection
+
+     - After re-entering plan mode, check if the assistant:
+       a. References the Plan & Lessons Protocol explicitly
+       b. Creates prompt-logs/{YYMMDD}-{title}/plan.md (not just the system
+     plan file)
+       c. Includes Gherkin-format Success Criteria in the plan
+
+     Step 3: Distinguish hook effect from CLAUDE.md
+
+     - The hook's effect overlaps with CLAUDE.md's Plan Mode section
+     - To isolate: temporarily add a distinctive marker to the hook prompt
+     (e.g., "HOOK_FIRED: ...")
+     - If the assistant echoes or acknowledges the marker, the hook is
+     confirmed working
+
+     Expected Behavior
+
+     When hook works correctly:
+     1. Claude Code UI shows hook execution log when EnterPlanMode is called
+     2. The assistant receives the prompt and prioritizes the Plan & Lessons
+      Protocol
+     3. Plan artifacts are created in prompt-logs/ directory
+
+     Verification
+
+     The simplest definitive test:
+     1. Change the hook prompt to something observable, e.g.:
+     "prompt": "HOOK_TEST_MARKER: Plan & Lessons Protocol is active. READ
+     docs/plan-and-lessons.md."
+     2. Enter plan mode with a dummy task
+     3. Check if the assistant mentions or acknowledges HOOK_TEST_MARKER
+     4. Restore the original prompt after testing
+
+
+
+⏺ 계획이 승인되었습니다. 테스트를 시작하겠습니다.
+
+  Step 1: Hook prompt에 식별 마커를 임시로 추가합니다.
+
+⏺ Read 1 file (ctrl+o to expand)
+
+⏺ Update(.claude/settings.json)
+  ⎿  Added 1 line, removed 1 line
+       6          "hooks": [
+       7            {
+       8              "type": "prompt",
+       9 -            "prompt": "READ and FOLLOW the Plan & Lessons Proto
+         -col (docs/plan-and-lessons.md)."                               
+       9 +            "prompt": "HOOK_TEST_MARKER_7X9Q: Plan & Lessons Pr
+         +otocol is active. READ and FOLLOW docs/plan-and-lessons.md."   
+      10            }
+      11          ]
+      12        }
+
+⏺ 마커를 추가했습니다. 이제 hook이 제대로 작동하는지 확인하려면:
+
+  1. 이 대화에서 /plan 을 입력하거나 새 대화를 시작해서 plan mode에 진입해주세요
+  2. Plan mode 진입 시 Claude Code 터미널에 hook 실행 로그가 보이는지 확인
+  3. Assistant가 HOOK_TEST_MARKER_7X9Q를 인식하거나 언급하는지 확인
+
+  테스트가 끝나면 저에게 알려주시면 원래 prompt로 복원하겠습니다.
+
+✻ Cooked for 4m 36s
+
+❯ /plan 
+  ⎿  Enabled plan mode
+
+❯ /plan 
+  ⎿  Enabled plan mode
+
+❯ hook 적용된 걸 확신하기 위해 나갔다 왔습니다. 뭔가 계획해봅시다. 
+
+⏺ Hook 테스트 결과를 보고드립니다.
+
+  현재 제 컨텍스트를 확인한 결과, HOOK_TEST_MARKER_7X9Q 마커가 별도의 hook 주입 
+  prompt로 보이지 않습니다. 유일하게 해당 마커가 보이는 곳은 settings.json 파일
+  변경 알림뿐입니다.
+
+  이는 다음 중 하나를 의미할 수 있습니다:
+
+  1. prompt 타입 hook이 EnterPlanMode에 대해 발동하지 않았을 가능성 —
+  EnterPlanMode는 내부 도구라서 PreToolUse hook이 매칭되지 않을 수 있음
+  2. Hook이 발동했지만 prompt가 다른 시스템 메시지와 구분 없이 섞였을 가능성 —
+  낮은 확률
+
+  공식 문서에서 prompt 타입 hook의 동작 방식을 확인해보겠습니다.
+
+⏺ Fetch(https://docs.anthropic.com/en/docs/claude-code/hooks)
+  ⎿  Received 778 bytes (301 Moved Permanently)
+
+⏺ Fetch(https://code.claude.com/docs/en/hooks)
+  ⎿  Received 45.2KB (200 OK)
+
+⏺ 공식 문서에서 중요한 사실을 발견했습니다. Plan 파일을 업데이트하겠습니다.
+
+⏺ Read 1 file (ctrl+o to expand)
+
+⏺ Updated plan
+  ⎿  /plan to preview
+
+⏺ 핵심 발견사항을 공유드립니다:
+
+  현재 hook이 의도와 다르게 동작하고 있습니다.
+
+  type: "prompt" hook은 assistant에게 텍스트를 주입하는 것이 아닙니다. 공식
+  문서에 따르면:
+  - prompt 내용을 별도의 LLM (Haiku)에 보내서 {ok: true/false}를 판단
+  - ok: true면 도구 호출 허용, ok: false면 차단
+
+  즉, 현재 설정은 Haiku에게 "EnterPlanMode를 허용할까?"를 묻고 있을 뿐,
+  assistant에게 Plan & Lessons Protocol을 따르라는 지시를 주입하지 않습니다.
+
+  수정 방법: type: "command" hook으로 변경하고, additionalContext가 포함된
+  JSON을 출력하면 assistant 컨텍스트에 주입됩니다.
+
+  계획을 승인하시면 설정을 수정하겠습니다.
+
+⏺ User approved Claude's plan
+  ⎿  Plan saved to: ~/.claude/plans/swift-nibbling-reddy.md · /plan to edit
+     Fix EnterPlanMode Hook
+
+     Problem Found
+
+     The current hook uses type: "prompt", but according to the official
+     docs
+     (https://code.claude.com/docs/en/hooks), prompt-type hooks do NOT 
+     inject
+     text into the assistant's context. Instead, they:
+
+     1. Send the prompt + hook input to a separate fast LLM (Haiku)
+     2. Haiku returns {"ok": true/false, "reason": "..."}
+     3. If ok: false, the tool call is blocked; if ok: true, it proceeds
+     normally
+
+     So the current hook is asking Haiku "should EnterPlanMode be allowed?"
+     —
+     not injecting a reminder to follow the protocol.
+
+     Current (broken) Configuration
+
+     {
+       "hooks": {
+         "PreToolUse": [{
+           "matcher": "EnterPlanMode",
+           "hooks": [{
+             "type": "prompt",
+             "prompt": "READ and FOLLOW the Plan & Lessons Protocol 
+     (docs/plan-and-lessons.md)."
+           }]
+         }]
+       }
+     }
+
+     Fix
+
+     Use a command type hook that outputs JSON with additionalContext.
+     This injects context into the assistant's conversation when
+     EnterPlanMode is called.
+
+     Fixed Configuration
+
+     {
+       "hooks": {
+         "PreToolUse": [{
+           "matcher": "EnterPlanMode",
+           "hooks": [{
+             "type": "command",
+             "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"
+     PreToolUse\",\"additionalContext\":\"READ and FOLLOW the Plan & Lessons
+      Protocol (docs/plan-and-lessons.md).\"}}'"
+           }]
+         }]
+       }
+     }
+
+     How This Works
+
+     1. When EnterPlanMode is called, the command hook runs
+     2. The echo command outputs JSON with additionalContext
+     3. Claude Code injects additionalContext into the assistant's context
+     4. The assistant sees the reminder and follows the protocol
+
+     Verification
+
+     After applying the fix:
+     1. Enter plan mode → the hook should fire (visible in terminal)
+     2. The assistant should receive the additionalContext and follow the
+     protocol
+     3. Test with a marker first to confirm injection works
+
+     Files to Modify
+
+     - .claude/settings.json — change hook type from prompt to command with
+     JSON output
+
+
+
+⏺ 설정 파일을 수정하겠습니다. 먼저 검증을 위해 테스트 마커를 포함한 버전으로
+  적용합니다.
+
+⏺ Read 1 file (ctrl+o to expand)
+
+⏺ Write(.claude/settings.json)
+  ⎿  Added 2 lines, removed 2 lines
+       5          "matcher": "EnterPlanMode",
+       6          "hooks": [
+       7            {
+       8 -            "type": "prompt",                                  
+       9 -            "prompt": "HOOK_TEST_MARKER_7X9Q: Plan & Lessons Pr
+         -otocol is active. READ and FOLLOW docs/plan-and-lessons.md."   
+       8 +            "type": "command",                                 
+       9 +            "command": "echo '{\"hookSpecificOutput\":{\"hookEv
+         +entName\":\"PreToolUse\",\"additionalContext\":\"HOOK_TEST_MARK
+         +ER_7X9Q: READ and FOLLOW the Plan & Lessons Protocol (docs/plan
+         +-and-lessons.md).\"}}'"                                        
+      10            }
+      11          ]
+      12        }
+
+⏺ 수정 완료했습니다. 변경사항:
+
+  - type: "prompt" → "command"
+  - command: additionalContext가 포함된 JSON을 echo하는 명령어
+  - 테스트 마커 HOOK_TEST_MARKER_7X9Q 유지
+
+  다음 단계: 새 대화를 시작하거나 /plan으로 plan mode에 진입해서, assistant가
+  HOOK_TEST_MARKER_7X9Q를 인식하는지 확인해주세요. Hook 변경사항은 새 세션이나
+  /hooks 메뉴에서 승인 후 적용됩니다.
+
+  확인되면 말씀해주시면 마커를 제거하고 최종 버전으로 정리하겠습니다.
+
+✻ Cogitated for 2m 0s
+
+❯ 나갔다 왔습니다. 다시 해봅시다. 
+
+⏺ 현재 컨텍스트를 확인해보겠습니다.
+
+  결과: HOOK_TEST_MARKER_7X9Q가 제 컨텍스트에 주입되지 않았습니다.
+
+  새로운 가능성을 발견했습니다:
+
+  /plan 명령어는 EnterPlanMode 도구를 호출하지 않을 수 있습니다. /plan은 CLI
+  내장 명령어로, plan mode를 직접 토글합니다. 반면 EnterPlanMode은 assistant가
+  비자발적으로 plan mode에 진입할 때 호출하는 도구입니다. Hook의 PreToolUse
+  matcher는 도구 호출 시에만 발동하므로, 사용자가 /plan을 입력하면 hook이
+  트리거되지 않습니다.
+
+⏺ User answered Claude's questions:
+  ⎿  · hook이 발동하는 시나리오를 어떻게 설정하고 싶으신가요? → 둘 다
+  ⎿  Interrupted · What should Claude do instead?
+
+❯ 근데 `/plan`과 제가 shift + tab 으로 plan mode에 들어갔을 때는 같은 거죠? 
+
+⏺ 네, 둘 다 사용자가 직접 plan mode를 토글하는 방식이라 동일할 것입니다.
+
+  핵심 구분은:
+  ┌─────────────────────────┬────────────────┬─────────────────────────┐
+  │          방식           │     트리거     │ EnterPlanMode 도구 호출 │
+  ├─────────────────────────┼────────────────┼─────────────────────────┤
+  │ /plan 또는 Shift+Tab    │ 사용자 직접    │ X (CLI가 직접 토글)     │
+  ├─────────────────────────┼────────────────┼─────────────────────────┤
+  │ Assistant가 스스로 진입 │ Assistant 판단 │ O (도구 호출 발생)      │
+  └─────────────────────────┴────────────────┴─────────────────────────┘
+  현재 hook(PreToolUse → EnterPlanMode)은 assistant가 스스로 plan mode에 진입할
+  때만 발동합니다. 사용자가 /plan이나 Shift+Tab으로 진입하면 도구 호출 자체가
+  없어서 hook이 트리거되지 않습니다.
+
+  두 경우 모두 커버하려면 UserPromptSubmit hook도 추가해야 합니다. 계속
+  진행할까요?
+
+❯ 그전에 스스로 진입했을 때 보이는지부터 확인하고 싶습니다. 그래야 복제     
+  후에도 테스트하니까요.                                                    
+
+⏺ 맞습니다. 먼저 assistant 진입(EnterPlanMode 도구 호출) 시 hook이 작동하는지
+  확인하겠습니다.
+
+  지금 제가 EnterPlanMode을 호출해보겠습니다. 터미널에 hook 실행 로그가
+  보이는지, 그리고 제가 HOOK_TEST_MARKER_7X9Q를 인식하는지 확인해주세요.
+
+⏺ Entered plan mode
+  Claude is now exploring and designing an implementation approach.
+
+⏺ Hook 작동 확인됨! 제 컨텍스트에 다음이 주입되었습니다:
+
+  PreToolUse:EnterPlanMode hook additional context: HOOK_TEST_MARKER_7X9Q: READ 
+  and FOLLOW the Plan & Lessons Protocol (docs/plan-and-lessons.md).
+
+  command 타입 hook + additionalContext JSON 출력 방식이 EnterPlanMode 도구 호출
+   시 정상 작동합니다.
+
+  이제 다음 단계로 /plan(사용자 직접 진입) 시에도 작동하도록 UserPromptSubmit
+  hook을 추가하면 됩니다. Plan 파일을 업데이트하겠습니다.
+
+⏺ Read 1 file (ctrl+o to expand)
+
+⏺ Updated plan
+  ⎿  /plan to preview
+
+⏺ 계획을 업데이트했습니다. 한 가지 불확실한 점이 있습니다:
+
+  - /plan이 UserPromptSubmit hook을 트리거하는지 확인이 필요합니다. 내장
+  명령어라서 hook 이전에 가로채질 수 있습니다.
+  - Shift+Tab은 IDE 레벨 토글이라 UserPromptSubmit을 거치지 않을 가능성이
+  높습니다.
+
+  우선 구현 후 테스트로 확인하는 것이 가장 빠릅니다.
+
+⏺ User approved Claude's plan
+  ⎿  Plan saved to: ~/.claude/plans/swift-nibbling-reddy.md · /plan to edit
+     Fix & Extend Plan Mode Hook
+
+     Test Results
+
+     - type: "prompt" on PreToolUse → does NOT inject context (sends to
+     Haiku for ok/block decision)
+     - type: "command" with additionalContext JSON on PreToolUse → WORKS
+     (confirmed with HOOK_TEST_MARKER_7X9Q)
+     - /plan and Shift+Tab → does NOT trigger EnterPlanMode tool (CLI
+     directly toggles plan mode)
+
+     Plan
+
+     Cover both plan mode entry paths:
+
+     1. PreToolUse → EnterPlanMode (assistant-initiated) — already working
+     2. UserPromptSubmit (user-initiated /plan or Shift+Tab) — need to add
+
+     Final Configuration
+
+     {
+       "hooks": {
+         "PreToolUse": [
+           {
+             "matcher": "EnterPlanMode",
+             "hooks": [{
+               "type": "command",
+               "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":
+     \"PreToolUse\",\"additionalContext\":\"READ and FOLLOW the Plan & 
+     Lessons Protocol (docs/plan-and-lessons.md).\"}}'"
+             }]
+           }
+         ],
+         "UserPromptSubmit": [
+           {
+             "hooks": [{
+               "type": "command",
+               "command":
+     "$CLAUDE_PROJECT_DIR/.claude/hooks/plan-mode-prompt.sh"
+             }]
+           }
+         ]
+       }
+     }
+
+     plan-mode-prompt.sh
+
+     Reads stdin JSON, checks if prompt matches /plan. If so, outputs
+     additionalContext.
+     For non-/plan prompts, exits silently.
+
+     #!/bin/bash
+     PROMPT=$(cat | jq -r '.prompt // empty')
+     if echo "$PROMPT" | grep -qi '^/plan'; then
+       echo '{"hookSpecificOutput":{"hookEventName":"UserPromptSubmit","addi
+     tionalContext":"READ and FOLLOW the Plan & Lessons Protocol 
+     (docs/plan-and-lessons.md)."}}'
+     fi
+     exit 0
+
+     Note: UserPromptSubmit stdout is added as context (exit code 0).
+
+     Cleanup
+
+     - Remove test marker HOOK_TEST_MARKER_7X9Q from PreToolUse hook
+     - Commit with descriptive message
+
+     Files to Modify
+
+     - .claude/settings.json — add UserPromptSubmit hook, remove test marker
+     - .claude/hooks/plan-mode-prompt.sh — new script (detect /plan prompt)
+
+
+⏺ 구현하겠습니다.
+
+⏺ Bash(mkdir -p /Users/ted/codes/corca/claude-plugins/.claude/hooks)
+  ⎿  (No content)
+
+⏺ Write(.claude/hooks/plan-mode-prompt.sh)
+  ⎿  Wrote 7 lines to .claude/hooks/plan-mode-prompt.sh
+      1 #!/bin/bash
+      2 PROMPT=$(cat | jq -r '.prompt // empty')
+      3 if echo "$PROMPT" | grep -qi '^/plan'; then
+      4   echo '{"hookSpecificOutput":{"hookEventName":"UserPromptSubmit"
+        ,"additionalContext":"READ and FOLLOW the Plan & Lessons Protocol
+         (docs/plan-and-lessons.md)."}}'
+      5 fi
+      6 exit 0
+
+⏺ Bash(chmod +x
+      /Users/ted/codes/corca/claude-plugins/.claude/hooks/plan-mode-prompt.sh)
+  ⎿  (No content)
+
+⏺ Write(.claude/settings.json)
+  ⎿  Added 11 lines, removed 1 line
+       6          "hooks": [
+       7            {
+       8              "type": "command",
+       9 -            "command": "echo '{\"hookSpecificOutput\":{\"hookEv
+         -entName\":\"PreToolUse\",\"additionalContext\":\"HOOK_TEST_MARK
+         -ER_7X9Q: READ and FOLLOW the Plan & Lessons Protocol (docs/plan
+         --and-lessons.md).\"}}'"                                        
+       9 +            "command": "echo '{\"hookSpecificOutput\":{\"hookEv
+         +entName\":\"PreToolUse\",\"additionalContext\":\"READ and FOLLO
+         +W the Plan & Lessons Protocol (docs/plan-and-lessons.md).\"}}'"
+      10            }
+      11          ]
+      12        }
+      13 +    ],                                                         
+      14 +    "UserPromptSubmit": [                                      
+      15 +      {                                                        
+      16 +        "hooks": [                                             
+      17 +          {                                                    
+      18 +            "type": "command",                                 
+      19 +            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/plan-
+         +mode-prompt.sh"                                                
+      20 +          }                                                    
+      21 +        ]                                                      
+      22 +      }                                                        
+      23      ]
+      24    }
+      25  }
+
+⏺ 완료했습니다. 적용된 내용:
+
+  1. .claude/settings.json — 테스트 마커 제거, UserPromptSubmit hook 추가
+  2. .claude/hooks/plan-mode-prompt.sh — /plan 감지 시 context 주입 스크립트
+  (실행 권한 부여)
+
+  테스트 방법: 새 세션을 시작하고 /plan을 입력한 뒤, assistant가 Plan & Lessons
+  Protocol 관련 additionalContext를 받는지 확인해주세요. Hook 변경은 새 세션부터
+   적용됩니다.
+
+✻ Cooked for 1m 12s
+
+❯ 나갔다 왔습니다. 현재 플랜 모드입니다. 
+
+⏺ /plan으로 진입하셨죠? 제 컨텍스트에 UserPromptSubmit hook의
+  additionalContext가 주입되었는지 확인해보겠습니다.
+
+  결과: Plan & Lessons Protocol 관련 additionalContext가 보이지 않습니다.
+
+  예상했던 대로, /plan은 내장 CLI 명령어라서 UserPromptSubmit hook을 트리거하지
+  않는 것으로 보입니다. /plan은 프롬프트 제출이 아니라 모드 토글이기 때문에 hook
+   파이프라인을 거치지 않습니다.
+
+  정리하면:
+  ┌──────────────────────────────┬────────────────┬────────────────────────────┐
+  │          진입 방식           │  PreToolUse    │   UserPromptSubmit hook    │
+  │                              │      hook      │                            │
+  ├──────────────────────────────┼────────────────┼────────────────────────────┤
+  │ Assistant가 EnterPlanMode    │ 작동           │ N/A                        │
+  │ 호출                         │                │                            │
+  ├──────────────────────────────┼────────────────┼────────────────────────────┤
+  │ 사용자 /plan                 │ N/A            │ 미작동 (프롬프트 제출      │
+  │                              │                │ 아님)                      │
+  ├──────────────────────────────┼────────────────┼────────────────────────────┤
+  │ 사용자 Shift+Tab             │ N/A            │ 미작동 (프롬프트 제출      │
+  │                              │                │ 아님)                      │
+  └──────────────────────────────┴────────────────┴────────────────────────────┘
+  /plan과 Shift+Tab은 프롬프트 제출이 아닌 모드 토글이라 현재 hook 시스템으로는
+  가로챌 수 없습니다.
+
+⏺ User answered Claude's questions:
+  ⎿  · 사용자 직접 진입 시 hook을 어떻게 처리할까요? → UserPromptSubmit 제거
+
+
+⏺ 계획을 정리하겠습니다.
+  ⎿  Interrupted · What should Claude do instead?
+
+❯ 플랜 모드 없이 그냥 정리해 주세요. 아쉽네요. 그런데 하나 궁금한 게        
+  있습니다. 맨 처음에 Explore 에이전트가 굉장히 많은 토큰을 썼는데 뭘       
+  탐색하는 데 쓴 거죠? 예상보다 훨씬 더 오랜 시간이 걸렸습니다. 개선 가능한 
+  신호라고 느꼈습니다. 제 추측은 prompt-logs 디렉토리를 읽은 게 아닌가      
+  하는데 아닐 수도 있습니다.                                                
+
+⏺ 두 가지 처리하겠습니다: 1) 설정 정리, 2) Explore 에이전트 분석.
+
+  먼저 설정을 정리합니다. UserPromptSubmit hook과 불필요한 스크립트를
+  제거합니다.
+
+⏺ Write(.claude/settings.json)
+  ⎿  User rejected update to .claude/settings.json
+
+❯ 아 실수로 거부했네요. 진행해주세요. 
+
+⏺ Write(.claude/settings.json)
+  ⎿  Removed 10 lines
+      10            }
+      11          ]
+      12        }
+      13 -    ],                                                         
+      14 -    "UserPromptSubmit": [                                      
+      15 -      {                                                        
+      16 -        "hooks": [                                             
+      17 -          {                                                    
+      18 -            "type": "command",                                 
+      19 -            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/plan-
+         -mode-prompt.sh"                                                
+      20 -          }                                                    
+      21 -        ]                                                      
+      22 -      }                                                        
+      13      ]
+      14    }
+      15  }
+
+⏺ Bash(rm
+      /Users/ted/codes/corca/claude-plugins/.claude/hooks/plan-mode-prompt.sh &&
+       rmdir /Users/ted/codes/corca/claude-plugins/.claude/hooks 2>/dev/null;
+      echo "done")
+  ⎿  done
+
+⏺ 정리 완료. UserPromptSubmit hook과 .claude/hooks/plan-mode-prompt.sh
+  제거했습니다.
+
+  ---
+  Explore 에이전트 토큰 사용량 질문에 대해: 맨 처음 호출한 Explore 에이전트의
+  프롬프트는 "hook 설정 파일 탐색"이었는데, 다음을 모두 읽었습니다:
+
+  1. .claude/settings.json (프로젝트)
+  2. ~/.claude/settings.json, ~/.claude/settings.local.json (유저 레벨)
+  3. ~/.claude/hooks/attention.sh (211줄)
+  4. plugins/attention-hook/hooks/hooks.json
+  5. plugins/attention-hook/hooks/scripts/attention.sh (143줄)
+  6. plugins/attention-hook/hooks/scripts/start-timer.sh (41줄)
+  7. plugins/attention-hook/hooks/scripts/cancel-timer.sh (24줄)
+  8. plugins/attention-hook/hooks/scripts/parse-transcript.sh (190줄)
+  9. docs/plan-and-lessons.md (85줄)
+
+  특히 attention-hook 플러그인의 4개 스크립트(총 ~400줄)를 전부 읽은 것이 토큰
+  소비의 주 원인입니다. prompt-logs 디렉토리를 읽은 것은 아닙니다. 제가 "hook
+  설정을 찾아라"라고 지시했을 때 에이전트가 hook 관련 스크립트까지 모두 내용을
+  읽어버린 것이죠.
+
+  개선 포인트: Explore 에이전트에 "설정 파일의 구조만 확인하라, 스크립트 내용은
+  읽지 마라"처럼 범위를 좁혀 지시했으면 토큰을 크게 절약할 수 있었습니다.
+
+❯ 음 그건 제 프롬프트의 실수 같기도 합니다. 알겠습니다. 이번 세션이         
+  흥미로웠는데, plan 을 여러번 왔다갔다했기도 했고 개밥먹기적 탐색이라      
+  plan-and-lesson 프로토콜을 그대로 따르기 좀 애매하네요. 어쨌든 최대한     
+  노력해서 plan과 lesson을 기록해주시겠어요?                                
+
+⏺ Read 1 file (ctrl+o to expand)
+
+⏺ Bash(mkdir -p /Users/ted/codes/corca/claude-plugins/prompt-logs/260130-fix-pla
+      n-mode-hook)
+  ⎿  (No content)
+
+⏺ Write(prompt-logs/260130-fix-plan-mode-hook/plan.md)
+  ⎿  Wrote 47 lines to prompt-logs/260130-fix-plan-mode-hook/plan.md
+       1 # Fix Plan Mode Hook
+       2 
+       3 ## Context
+       4 
+       5 The project had a `PreToolUse` hook on `EnterPlanMode` using `ty
+         pe: "prompt"` intended to inject a reminder to follow the Plan &
+          Lessons Protocol. Testing revealed this didn't work as expected
+         .
+       6 
+       7 ## Success Criteria
+       8 
+       9 ```gherkin
+      10 Given the project .claude/settings.json has a PreToolUse hook on
+          EnterPlanMode
+     … +37 lines (ctrl+o to expand)
+
+❯ /retro 
+
+⏺ Write(prompt-logs/260130-fix-plan-mode-hook/lessons.md)
+  ⎿  Wrote 36 lines to prompt-logs/260130-fix-plan-mode-hook/lessons.md
+      1 # Lessons
+      2 
+      3 ### prompt 타입 hook은 컨텍스트 주입이 아니다
+      4 
+      5 - **Expected**: `type: "prompt"` hook이 assistant에게 텍스트를 주
+        입할 것
+      6 - **Actual**: prompt 타입은 별도 LLM(Haiku)에 보내서 ok/block 판
+        단만 함. 컨텍스트 주입 아님
+      7 - **Takeaway**: 컨텍스트 주입이 목적이면 `type: "command"` + `add
+        itionalContext` JSON 출력 사용
+      8 
+      9 When hook으로 assistant에 지시를 주입하고 싶을 때 → `type: "comma
+        nd"` + `hookSpecificOutput.additionalContext` JSON
+     … +26 lines (ctrl+o to expand)
+
+⏺ prompt-logs/260130-fix-plan-mode-hook/에 plan.md와 lessons.md를 기록했습니다.
+  /retro 요청도 받았으니 바로 실행하겠습니다.
+
+⏺ Skill(retro)
+  ⎿  Successfully loaded skill · 6 tools allowed
+
+⏺ Read 3 files (ctrl+o to expand)
+
+⏺ Web Search("Claude Code hooks additionalContext PreToolUse command type 2026")
+  ⎿  Did 1 search in 26s
+
+⏺
+
+⏺ Web Search("Claude Code plan mode customization hooks best practices
+            dogfooding 2026")
+  ⎿  Did 1 search in 31s
+
+⏺ Looking at this session, the key workflows were:
+  1. Hook testing/debugging
+  2. Plan mode customization
+
+  I don't think there's a clear skill gap here. The user is building their own
+  tools (dogfooding). Let me now write the retro.
+
+  Let me draft the retro mentally:
+
+  Section 1: Context Worth Remembering
+  - User is building a Claude Code plugin ecosystem (claude-plugins project)
+  - Dogfooding approach: testing tools they build for their own use
+  - Hook system knowledge: prompt type vs command type, additionalContext
+  injection
+  - Project has attention-hook plugin for Slack/Discord notifications
+
+  Section 2: Collaboration Preferences
+  - User prefers quick iterations with confirmation checkpoints
+  - Comfortable with plan mode but wants flexibility
+  - Values understanding WHY something works/doesn't work
+  - Korean communication, English for code/docs
+  - CLAUDE.md already captures most collaboration preferences well
+
+  Section 3: Prompting Habits
+  - The Explore agent prompt was too broad ("find all hook configurations")
+  - User recognized this themselves ("제 프롬프트의 실수 같기도 합니다")
+  - When testing, user preferred incremental verification (test one thing, then
+  expand)
+
+  Section 4: Learning Resources
+  - Claude Code hooks official docs
+  - Best practices for hooks
+  - awesome-claude-code repo
+
+  Section 5: Relevant Skills
+  - No clear skill gap - the user is building their own tooling
+  - Could mention skill-creator if they want to formalize hook testing
+
+  Let me write this up now.
+
+⏺ Write(prompt-logs/260130-fix-plan-mode-hook/retro.md)
+  ⎿  Wrote 52 lines to prompt-logs/260130-fix-plan-mode-hook/retro.md
+       1 # Retro: Plan Mode Hook 수정
+       2 
+       3 > Session date: 2026-01-30
+       4 
+       5 ## 1. Context Worth Remembering
+       6 
+       7 - 이 프로젝트(claude-plugins)는 Claude Code 플러그인/스킬/hook 
+         생태계를 관리하는 저장소
+       8 - 사용자는 자신이 만든 도구를 직접 사용하는 개밥먹기(dogfooding)
+          방식으로 개발 중
+       9 - Claude Code hook 시스템의 핵심 구분:
+      10   - `type: "prompt"` → 별도 LLM(Haiku)에 보내 ok/block 판단. 컨
+         텍스트 주입 아님
+     … +42 lines (ctrl+o to expand)
+
+⏺ retro.md를 작성했습니다. CLAUDE.md 업데이트 제안이 하나 있습니다:
+
+  Collaboration Style에 추가: When testing hooks or infrastructure, verify 
+  incrementally — test one path first, then expand to others.
+
+
+⏺ User answered Claude's questions:
+  ⎿  · CLAUDE.md Collaboration Style에 위 내용을 추가할까요? → 추가
+
+⏺ Read 1 file (ctrl+o to expand)
+
+⏺ Update(CLAUDE.md)
+  ⎿  Added 1 line
+      25  - The user expects protocols in CLAUDE.md to be followed withou
+          t explicit reminders.
+      26  - Prefer short, precise feedback loops — ask for intent confirm
+          ation before large implementations.
+      27  - When researching Claude Code features (hooks, settings, plugi
+          ns), always verify against the official docs (https://code.clau
+          de.com/docs/en/) via WebFetch. Do not rely solely on claude-cod
+          e-guide agent responses.
+      28 +- When testing hooks or infrastructure, verify incrementally — 
+         +test one path first, then expand to others.                    
+      29  
+      30  ## Language
+      31  
+
+⏺ 완료했습니다. 이번 세션 산출물 정리:
+  파일: .claude/settings.json
+  내용: type: "command" + additionalContext로 수정된 hook
+  ────────────────────────────────────────
+  파일: prompt-logs/260130-fix-plan-mode-hook/plan.md
+  내용: 세션 계획 및 결과
+  ────────────────────────────────────────
+  파일: prompt-logs/260130-fix-plan-mode-hook/lessons.md
+  내용: 5개 학습 사항
+  ────────────────────────────────────────
+  파일: prompt-logs/260130-fix-plan-mode-hook/retro.md
+  내용: 세션 회고
+  ────────────────────────────────────────
+  파일: CLAUDE.md
+  내용: Collaboration Style에 점진적 검증 규칙 추가
+
+✻ Baked for 3m 5s

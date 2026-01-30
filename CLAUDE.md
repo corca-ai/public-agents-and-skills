@@ -25,6 +25,7 @@ For non-trivial implementation tasks (new plugins, multi-file changes, architect
 - The user expects protocols in CLAUDE.md to be followed without explicit reminders.
 - Prefer short, precise feedback loops — ask for intent confirmation before large implementations.
 - When researching Claude Code features (hooks, settings, plugins), always verify against the official docs (https://code.claude.com/docs/en/) via WebFetch. Do not rely solely on claude-code-guide agent responses.
+- When testing hooks or infrastructure, verify incrementally — test one path first, then expand to others.
 
 ## Language
 
