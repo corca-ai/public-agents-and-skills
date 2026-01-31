@@ -26,7 +26,7 @@ Use basic tools like bash and curl whenever possible. Minimize external dependen
 
 ## Review AI_NATIVE_PRODUCT_TEAM.md Links
 
-When adding a new plugin, review whether a link to that plugin can be added to `AI_NATIVE_PRODUCT_TEAM.md`.
+When adding a new plugin, review whether a link to that plugin can be added to `AI_NATIVE_PRODUCT_TEAM.md` (and `AI_NATIVE_PRODUCT_TEAM.ko.md` if applicable).
 
 This document explains AI-native team workflows and links to relevant tools as examples:
 - Research tools (e.g., gather-context)

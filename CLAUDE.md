@@ -30,6 +30,7 @@ For non-trivial implementation tasks (new plugins, multi-file changes, architect
 
 ## Language
 
-Write all documentation in English, except for:
-- `README.md`
-- `AI_NATIVE_PRODUCT_TEAM.md`
+Write all documentation in English by default.
+Korean versions live in:
+- `README.ko.md`
+- `AI_NATIVE_PRODUCT_TEAM.ko.md`

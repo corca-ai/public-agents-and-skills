@@ -17,7 +17,7 @@ Accumulated context from retrospectives. Each session's retro may add to this do
 
 ## Conventions
 
-- Documentation language: English for docs/, Korean for README.md and AI_NATIVE_PRODUCT_TEAM.md
+- Documentation language: English for docs/ and default top-level docs; Korean versions live in README.ko.md and AI_NATIVE_PRODUCT_TEAM.ko.md
 - Lessons and retro: written in the user's language
 - Plugin structure: `plugins/{name}/.claude-plugin/plugin.json` + `plugins/{name}/skills/{name}/SKILL.md`
 
