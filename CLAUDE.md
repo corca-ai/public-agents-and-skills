@@ -19,6 +19,12 @@ This is separate from the system plan file — create `prompt-logs/` directory w
 
 For non-trivial implementation tasks (new plugins, multi-file changes, architectural decisions), proactively use `EnterPlanMode` even when the user does not explicitly request it.
 
+After implementing a plan, complete the full workflow without waiting for explicit reminders:
+1. Mark plan.md as done (✅ on completed items)
+2. Update lessons.md with implementation learnings
+3. Run `/retro`
+4. Commit and push
+
 ## Collaboration Style
 
 - The user communicates in Korean. Respond in Korean for conversation, English for code and docs (per Language rules below).

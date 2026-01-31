@@ -215,13 +215,17 @@ A skill that uses the Tavily and Exa REST APIs for web search, code search, and 
 
 **Usage**:
 - Web search: `/web-search <query>`
+- News search: `/web-search --news <query>`
+- Advanced depth: `/web-search --deep <query>`
 - Code/technical search: `/web-search code <query>`
-- URL extraction: `/web-search extract <url>`
+- URL extraction: `/web-search extract <url> [query]`
 
 **Key features**:
 - General web search via Tavily (summary + sources)
-- Specialized code/technical search via Exa (GitHub, Stack Overflow, docs, etc.)
-- Extracts URL content into Markdown
+- Query intelligence: auto-detects temporal intent and topic to set API parameters (time_range, topic)
+- Optional modifiers: `--news` for news topic, `--deep` for advanced search depth
+- Specialized code/technical search via Exa with dynamic token allocation
+- URL extraction with optional relevance reranking via query parameter
 - Automatically chooses jq or python3 to parse JSON
 - Includes a Sources section in results
 

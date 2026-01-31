@@ -73,13 +73,33 @@ fi
 ### Request
 
 ```bash
+# Base payload — always included
 PAYLOAD=$(jq -n --arg q "$QUERY" '{
   query: $q,
   search_depth: "basic",
   max_results: 5,
   include_answer: true
 }')
+
+# Conditional parameters — add based on query analysis (see SKILL.md Execution Flow)
+# topic: set when query matches a specific topic
+PAYLOAD=$(echo "$PAYLOAD" | jq --arg t "$TOPIC" '. + {topic: $t}')
+# time_range: set when temporal intent detected
+PAYLOAD=$(echo "$PAYLOAD" | jq --arg tr "$TIME_RANGE" '. + {time_range: $tr}')
+# search_depth: override to "advanced" when --deep flag or complex query
+PAYLOAD=$(echo "$PAYLOAD" | jq '. + {search_depth: "advanced", include_raw_content: "markdown"}')
 ```
+
+### Conditional Parameters
+
+| Parameter | Values | When to set |
+|-----------|--------|-------------|
+| `topic` | `"general"` (default), `"news"`, `"finance"` | Set based on query analysis or `--news` flag. Omit for general queries. |
+| `time_range` | `"day"`, `"week"`, `"month"`, `"year"` | Set when temporal intent detected (e.g., "latest", "today", "this week", "2025", "2026"). Omit for evergreen queries. |
+| `search_depth` | `"basic"` (default), `"advanced"` | Override to `"advanced"` when `--deep` flag is used or query is complex/research-oriented. |
+| `include_raw_content` | `"markdown"` | Include when `search_depth` is `"advanced"`. Provides full page content for deeper analysis. |
+
+**Important**: Only add conditional parameters when they apply. Default behavior (no extra params) must remain unchanged for simple queries.
 
 ### Response Fields
 
@@ -163,13 +183,24 @@ for r in data.get('results', []):
 ### Request
 
 ```bash
-PAYLOAD=$(jq -n --arg q "$QUERY" '{
+PAYLOAD=$(jq -n --arg q "$QUERY" --argjson t "$TOKENS_NUM" '{
   query: $q,
-  tokensNum: 5000
+  tokensNum: $t
 }')
 ```
 
-`tokensNum`: Max response tokens (range: 1000-50000). Default 5000.
+### Token Allocation
+
+`tokensNum`: Max response tokens (range: 1000-50000). Set dynamically based on query complexity:
+
+| Query type | tokensNum | Example |
+|-----------|-----------|---------|
+| Simple lookup | 3000 | "golang sort slice" |
+| Standard query | 5000 | "React useEffect cleanup" |
+| Complex/architectural | 10000 | "React server components vs client components patterns" |
+| Deep research | 15000 | "microservices event sourcing CQRS implementation patterns" |
+
+Choose the tier that best matches the query. When unsure, default to 5000.
 
 ### Response Fields
 
@@ -226,12 +257,23 @@ If invalid, suggest: `Did you mean: /web-search <query>?`
 ### Request
 
 ```bash
+# Base payload
 PAYLOAD=$(jq -n --arg u "$URL" '{
   urls: [$u],
   extract_depth: "basic",
   format: "markdown"
 }')
+
+# Optional: add query for relevance reranking
+# When user provides a query after the URL (e.g., /web-search extract <url> "pricing")
+PAYLOAD=$(echo "$PAYLOAD" | jq --arg q "$EXTRACT_QUERY" '. + {query: $q}')
 ```
+
+### Optional Parameter
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `query` | string | Reranks extracted chunks by relevance to this query. Only add when the user provides a query after the URL. |
 
 ### Response Fields
 
@@ -311,9 +353,15 @@ Then add to your shell profile:
 Web Search Skill
 
 Usage:
-  /web-search <query>           General web search (Tavily)
-  /web-search code <query>      Code/technical search (Exa)
-  /web-search extract <url>     Extract URL content (Tavily)
+  /web-search <query>                General web search (Tavily)
+  /web-search --news <query>         News search (Tavily, topic: news)
+  /web-search --deep <query>         Advanced depth search (Tavily)
+  /web-search code <query>           Code/technical search (Exa)
+  /web-search extract <url> [query]  Extract URL content, optionally reranked by query (Tavily)
+
+Query intelligence (auto-detected):
+  Temporal keywords (latest, today, 2025...) → time_range filter
+  News/finance topics → topic filter
 
 Environment variables:
   TAVILY_API_KEY    Required for search and extract

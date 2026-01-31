@@ -215,13 +215,17 @@ Tavily와 Exa REST API를 활용하여 웹 검색, 코드 검색, URL 콘텐츠 
 
 **사용법**:
 - 웹 검색: `/web-search <query>`
+- 뉴스 검색: `/web-search --news <query>`
+- 심층 검색: `/web-search --deep <query>`
 - 코드/기술 검색: `/web-search code <query>`
-- URL 콘텐츠 추출: `/web-search extract <url>`
+- URL 콘텐츠 추출: `/web-search extract <url> [query]`
 
 **주요 기능**:
 - Tavily API를 통한 일반 웹 검색 (답변 요약 + 소스 목록)
-- Exa API를 통한 코드/기술 전문 검색 (GitHub, Stack Overflow, 문서 등)
-- URL에서 마크다운 형태로 콘텐츠 추출
+- 쿼리 인텔리전스: 시간적 의도와 토픽을 자동 감지하여 API 파라미터 설정 (time_range, topic)
+- 선택적 모디파이어: `--news`로 뉴스 토픽, `--deep`으로 심층 검색
+- Exa API를 통한 코드/기술 전문 검색 (동적 토큰 할당)
+- URL 추출 시 쿼리 파라미터로 관련성 기반 재정렬 지원
 - jq 또는 python3 자동 선택으로 JSON 파싱
 - 검색 결과에 Sources 섹션 포함
 
